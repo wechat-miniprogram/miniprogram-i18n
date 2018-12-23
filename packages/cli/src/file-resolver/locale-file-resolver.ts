@@ -16,12 +16,16 @@ export interface FileWalker {
   walk(folders: string[], locales: LocaleNames, ext: string): Promise<HierarchicalLocaleFile>
 }
 
+export interface Resolver {
+  resolve(paths: string[], additionals?: object): object
+}
+
 export enum LocaleFileFormat {
   // Note: currently only json file is supported
   JSON = '.json',
 }
 
-export default class LocaleFileResolver {
+export default class LocaleFileResolver implements Resolver {
   private static defaultExtName = LocaleFileFormat.JSON
 
   constructor(private walker: FileWalker, private ext: LocaleFileFormat = LocaleFileResolver.defaultExtName) { }
