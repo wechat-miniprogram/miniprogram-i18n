@@ -1,1 +1,3 @@
-console.log('test i18n/index')
+function name() {
+
+}

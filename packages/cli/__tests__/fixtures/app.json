@@ -1,0 +1,10 @@
+{
+  "i18n": {
+    "defaultLocale": "zh-CN",
+    "locales": [
+      "en-GB", "en-US", "zh-CN"
+    ],
+    "fallbackLocale": "en-US",
+    "localeFolder": "./i18n"
+  }
+}

@@ -4,7 +4,7 @@
   "description": "The internationalizational (i18n) library for wechat miniprogram",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:cli": "jest --config=scripts/jest.cli.config.js",
     "postinstall": "lerna bootstrap",
     "lint": "tslint -c tslint.json 'packages/**/*.ts'"
   },
@@ -19,11 +19,15 @@
   },
   "homepage": "https://github.com/ele828/miniprogram-i18n#readme",
   "devDependencies": {
+    "@types/jest": "^23.3.10",
     "jest": "^23.6.0",
     "lerna": "^3.6.0",
     "rollup": "^0.68.0",
     "rollup-plugin-typescript": "^1.0.0",
     "tslib": "^1.9.3",
     "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "ts-jest": "^23.10.5"
   }
 }
