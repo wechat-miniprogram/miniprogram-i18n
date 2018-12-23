@@ -1,6 +1,7 @@
 import path from 'path'
 import { FileWalker, HierarchicalLocaleFile } from './locale-file-resolver'
 import { readJSONFile, existsAsync, readdirAsync, lstatASync } from '../utils/fs'
+import { LocaleNames } from '../types'
 
 /**
  * RecursiveWalker will walk through entire projects to get locale files
@@ -10,7 +11,7 @@ export default class RecursiveWalker implements FileWalker {
     return this._walk(folders[0], locales, ext)
   }
 
-  async _walk(folder: string, locales: string[], ext: string): Promise<HierarchicalLocaleFile> {
+  async _walk(folder: string, locales: LocaleNames, ext: string): Promise<HierarchicalLocaleFile> {
     const currentFile = new HierarchicalLocaleFile()
     const hasLocaleFile = await existsAsync(path.join(folder, locales[0] + ext))
     if (hasLocaleFile) {

@@ -12,7 +12,7 @@ export const lstatASync = promisify(fs.lstat)
  *
  * @param path
  */
-export async function readJSONFile(path: string): Promise<string> {
+export async function readJSONFile(path: string): Promise<object> {
   const file = await readFileAsync(path, { encoding: 'utf-8' })
   let parsedContent = null
   try {

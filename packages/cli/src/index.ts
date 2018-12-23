@@ -1,9 +1,9 @@
 import { I18nError, formatErrors } from './utils/error'
-import { Locales } from './types'
+import { LocaleNames } from './types'
 
 interface Config {
   defaultLocale: string
-  locales: Locales
+  locales: LocaleNames
   fallbackLocale: string
   localeFolder: string
 }

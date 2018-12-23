@@ -1,8 +1,9 @@
 import path from 'path'
 import RecursiveWalker from '../../src/file-resolver/recursive-walker'
 import { HierarchicalLocaleFile } from '../../src/file-resolver/locale-file-resolver'
+import { RawEntry } from '../../src/types'
 
-function traverseFiles(file: HierarchicalLocaleFile, retval: Array<Map<string, string>>) {
+function traverseFiles(file: HierarchicalLocaleFile, retval: Array<Map<string, RawEntry>>) {
   if (file.locales) {
     retval.push(file.locales)
   }
@@ -18,7 +19,7 @@ test('RecursiveWalker', async () => {
     ['en-US', 'zh-CN'],
     '.json',
   )
-  const retval: Array<Map<string, string>> = []
+  const retval: Array<Map<string, RawEntry>> = []
   traverseFiles(file, retval)
   expect(retval).toHaveLength(3)
 })
