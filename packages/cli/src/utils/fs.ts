@@ -5,7 +5,7 @@ import { I18nError } from './error'
 export const readFileAsync = promisify(fs.readFile)
 export const existsAsync = promisify(fs.exists)
 export const readdirAsync = promisify(fs.readdir)
-export const lstatASync = promisify(fs.lstat)
+export const lstatAsync = promisify(fs.lstat)
 
 /**
  * Load JSON files from specified path

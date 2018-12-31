@@ -1,7 +1,7 @@
 import path from 'path'
 import LocaleFileResolver from '../../src/file-resolver/locale-file-resolver'
-import DeterministicWalker from '../../src/file-resolver/deterministic-walker'
-import RecursiveWalker from '../../src/file-resolver/recursive-walker'
+import DeterministicWalker from '../../src/file-resolver/walker/locale-deterministic-walker'
+import RecursiveWalker from '../../src/file-resolver/walker/locale-recursive-walker'
 
 test('LocaleFileResolver with DeterministicWalker', async () => {
   const resolver = new LocaleFileResolver(new DeterministicWalker())

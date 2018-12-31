@@ -1,43 +1,26 @@
 import path from 'path'
-import { LocaleNames, Nullable, RawLocaleEntries, LocaleContainer } from '../types'
+import { LocaleNames, Nullable, LocaleContainer } from '../types'
 import { I18nError } from '../utils/error'
-
-type NullableLocaleEntries = Nullable<RawLocaleEntries>
-type HierarchicalLocaleFileList = Array<HierarchicalLocaleFile>
-
-export class HierarchicalLocaleFile {
-  constructor(
-    public locales: NullableLocaleEntries = null,
-    public childLocales: HierarchicalLocaleFileList = [],
-  ) {}
-}
-
-export interface FileWalker {
-  walk(folders: string[], locales: LocaleNames, ext: string): Promise<HierarchicalLocaleFile>
-}
-
-export interface Resolver {
-  resolve(paths: string[], additionals?: object): object
-}
+import { FileResolver } from './file-resolver'
+import { LocaleFileWalker } from './walker/file-walker'
+import { HierarchicalLocaleFile } from './file'
 
 export enum LocaleFileFormat {
   // Note: currently only json file is supported
   JSON = '.json',
 }
 
-export default class LocaleFileResolver implements Resolver {
-  private static defaultExtName = LocaleFileFormat.JSON
-
-  constructor(private walker: FileWalker, private ext: LocaleFileFormat = LocaleFileResolver.defaultExtName) { }
+export default class LocaleFileResolver implements FileResolver {
+  constructor(private walker: LocaleFileWalker, private ext: LocaleFileFormat = LocaleFileFormat.JSON) { }
 
   async resolve(paths: string[], locales: LocaleNames) {
     const normalizedPaths = this.normalizePath(paths)
-    const localeContents = await this.walker.walk(normalizedPaths, locales, this.ext)
+    const localeContents = await this.walker.walk(normalizedPaths, this.ext, locales)
     return this.mergeLocales(localeContents, locales)
   }
 
   /**
-   * Use DFS to merge all locales collected by file walkers
+   * Merge all locales collected by locale file walker
    * @param localeFile
    */
   private mergeLocales(localeFile: HierarchicalLocaleFile, localeNames: LocaleNames): LocaleContainer {
@@ -48,7 +31,7 @@ export default class LocaleFileResolver implements Resolver {
     }
 
     // Traverse child folders first of all
-    for (const childFile of localeFile.childLocales) {
+    for (const childFile of localeFile.childFiles) {
       const childLocalesContainer = this.mergeLocales(childFile, localeNames)
       for (const localeName of Object.keys(childLocalesContainer)) {
         if (container[localeName]) {
@@ -58,8 +41,8 @@ export default class LocaleFileResolver implements Resolver {
     }
 
     // Parent folder has higher priority over child folders
-    // which means duplicated key in child folder won't even work
-    const locales = localeFile.locales
+    // which means duplicated key in child folder will be ignored
+    const locales = localeFile.content
     if (locales) {
       for (const [localeName, localeEntry] of locales) {
         if (container[localeName]) {

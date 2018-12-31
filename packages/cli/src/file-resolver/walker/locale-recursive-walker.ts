@@ -1,13 +1,14 @@
 import path from 'path'
-import { FileWalker, HierarchicalLocaleFile } from './locale-file-resolver'
-import { readJSONFile, existsAsync, readdirAsync, lstatASync } from '../utils/fs'
-import { LocaleNames } from '../types'
+import { HierarchicalLocaleFile } from '../file'
+import { readJSONFile, existsAsync, readdirAsync, lstatAsync } from '../../utils/fs'
+import { LocaleNames } from '../../types'
+import { LocaleFileWalker } from './file-walker'
 
 /**
  * RecursiveWalker will walk through entire projects to get locale files
  */
-export default class RecursiveWalker implements FileWalker {
-  async walk(folders: string[], locales: string[], ext: string): Promise<HierarchicalLocaleFile> {
+export default class LocaleRecursiveWalker implements LocaleFileWalker {
+  async walk(folders: string[], ext: string, locales: LocaleNames): Promise<HierarchicalLocaleFile> {
     return this._walk(folders[0], locales, ext)
   }
 
@@ -21,19 +22,19 @@ export default class RecursiveWalker implements FileWalker {
         const localeContent = await readJSONFile(path.join(folder, locale + ext))
         localesMap.set(locale, localeContent)
       }
-      currentFile.locales = localesMap
+      currentFile.content = localesMap
     }
     // See if there is any child folders
     const files = await readdirAsync(folder)
     for (const file of files) {
       const curPath = path.join(folder, file)
-      const stat = await lstatASync(curPath)
+      const stat = await lstatAsync(curPath)
       if (stat.isDirectory()) {
         const childFile = await this._walk(curPath, locales, ext)
-        if (!childFile.locales) {
-          currentFile.childLocales.push(...childFile.childLocales)
+        if (!childFile.content) {
+          currentFile.childFiles.push(...childFile.childFiles)
         } else {
-          currentFile.childLocales.push(childFile)
+          currentFile.childFiles.push(childFile)
         }
       }
     }
