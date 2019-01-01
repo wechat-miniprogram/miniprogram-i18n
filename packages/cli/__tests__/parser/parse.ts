@@ -19,18 +19,30 @@ test('parse t with single quote string', () => {
 })
 
 test('parse t with single quote string and escaped single quote', () => {
-  const source = `{{ t('key', { value: 'val\' escaped' }) }}`
+  const source = `{{ t('key', { value: 'val\\\' escaped' }) }}`
+  const parser = new TranslationBlockParser(source)
+  parser.parse()
+})
+
+test('parse t with double quote string and escaped double quote', () => {
+  const source = `{{ t('key', { value: "val\\\" escaped" }) }}`
+  const parser = new TranslationBlockParser(source)
+  parser.parse()
+})
+
+test('parse t with backtick string and escaped backtick', () => {
+  const source = '{{ t("key", { value: `val\\\` escaped` }) }}'
   const parser = new TranslationBlockParser(source)
   parser.parse()
 })
 
 test('parse t with double quote string', () => {
-  const source = `{{ t("key", { value: "val" }) }}`
+  const source = `{{ t('key', { value: 'val' }) }}`
   const parser = new TranslationBlockParser(source)
   parser.parse()
 })
 
-test('parse t with template quote string', () => {
+test('parse t with backtick string', () => {
   const source = '{{ t(`key`, { value: `val`}) }}'
   const parser = new TranslationBlockParser(source)
   parser.parse()
@@ -60,6 +72,7 @@ test('parse with js type inside value', () => {
   parser.parse()
 })
 
+// FIXME
 test('parse with nested object inside value', () => {
   const source = `{{ t('key', { val: { m: [], n: { m: { h: 'str' }}}}) }}`
   const parser = new TranslationBlockParser(source)

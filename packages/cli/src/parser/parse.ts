@@ -4,7 +4,7 @@ enum TokenType {
   SINGLE_QUOTE = '\'',
   DOUBLE_QUOTE = '"',
   BACK_QUOTE = '`',
-  BACK_SLASH = '\\',
+  BACK_SLASH= '\\',
 }
 
 /**
@@ -24,7 +24,7 @@ export class TranslationBlockParser  {
   parseTranslationBlock() {
     if (this.match(TokenType.LEFT_CURLY_BRACE) && this.matchNextChar(TokenType.LEFT_CURLY_BRACE)) {
       console.log('\n{{')
-      this.nextChar()
+      this.advance()
       this.enterTranslationBlock()
       this.parseTranslationBlock()
     } else if (this.match(TokenType.SINGLE_QUOTE)) {
@@ -38,38 +38,48 @@ export class TranslationBlockParser  {
     ) {
       console.log('\n}}')
       const block = this.exitTranslationBlock()
-      this.nextChar()
+      this.advance()
       console.log('block matched', block)
       // Pass translation block to babylon parser
     } else {
-      this.nextChar()
+      this.advance()
     }
   }
 
   parseSingleQuoteString() {
+    this.advance()
     while (!this.eof()) {
       if (this.match(TokenType.BACK_SLASH) && this.matchNextChar(TokenType.SINGLE_QUOTE)) {
-        continue
-      } else if (this.matchNextChar(TokenType.SINGLE_QUOTE)) {
+        console.log('matched escaped single quote')
+        this.advance()
+      } else if (this.match(TokenType.SINGLE_QUOTE)) {
         this.nextChar()
+        return
+      } else {
+        this.nextChar()
+      }
+    }
+  }
+
+  parseDoubleQuoteString() {
+    while (!this.eof()) {
+      if (this.match(TokenType.BACK_SLASH) && this.matchNextChar(TokenType.DOUBLE_QUOTE)) {
+        console.log('matched escaped double quote')
+        this.advance()
+      } else if (this.matchNextChar(TokenType.DOUBLE_QUOTE)) {
+        this.advance()
         return
       }
     }
   }
 
-parseDoubleQuoteString() {
+  parseTemplateString() {
     while (!this.eof()) {
-      if (this.matchNextChar(TokenType.DOUBLE_QUOTE)) {
-        this.nextChar()
-        return
-      }
-    }
-  }
-
-parseTemplateString() {
-    while (!this.eof()) {
-      if (this.matchNextChar(TokenType.BACK_QUOTE)) {
-        this.nextChar()
+      if (this.match(TokenType.BACK_SLASH) && this.matchNextChar(TokenType.BACK_QUOTE)) {
+        console.log('matched escaped backtick')
+        this.advance()
+      } else if (this.matchNextChar(TokenType.BACK_QUOTE)) {
+        this.advance()
         return
       }
     }
@@ -79,42 +89,46 @@ parseTemplateString() {
    * Object may also contains }} in nested object declaration
    * thus object declaration should be ignored
    */
-parseObject() {
+  parseObject() {
     while (!this.eof()) {
       if (this.matchNextChar(TokenType.RIGHT_CURLY_BRACE)) {
-        this.nextChar()
+        this.advance()
         return
       }
     }
   }
 
-enterTranslationBlock() {
+  enterTranslationBlock() {
     this.blockStart = this.pos
   }
 
-exitTranslationBlock(): string {
+  exitTranslationBlock(): string {
     const block = this.source.substring(this.blockStart, this.pos - 1)
     this.blockStart = -1
     return block
   }
 
-match(type: TokenType) {
+  match(type: TokenType) {
     return this.peekChar() === type
   }
 
-matchNextChar(type: TokenType) {
+  matchNextChar(type: TokenType) {
     return this.nextChar() === type
   }
 
-peekChar() {
+  peekChar() {
     return this.source[this.pos]
   }
 
-nextChar() {
+  nextChar() {
     return this.source[++this.pos]
   }
 
-eof() {
+  advance() {
+    this.pos++
+  }
+
+  eof() {
     return this.pos === this.source.length
   }
 }

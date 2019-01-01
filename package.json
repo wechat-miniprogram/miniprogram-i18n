@@ -4,7 +4,7 @@
   "description": "The internationalizational (i18n) library for wechat miniprogram",
   "main": "index.js",
   "scripts": {
-    "test:cli": "jest --config=scripts/jest.cli.config.js",
+    "test:cli": "jest --config=scripts/jest.cli.config.js --verbose",
     "postinstall": "lerna bootstrap",
     "lint": "tslint -c tslint.json 'packages/**/*.ts'"
   },
