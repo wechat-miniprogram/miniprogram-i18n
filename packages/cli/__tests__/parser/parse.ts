@@ -145,3 +145,14 @@ test('bad case: parse with only right brace', () => {
   const stmts = parser.parse()
   expect(stmts).toHaveLength(0)
 })
+
+test('bad case: parse with only one brace', () => {
+  const source = `{`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+  // const source2 = `}`
+  // const parser2 = new TranslationBlockParser(source2)
+  // const stmts2 = parser.parse()
+  // expect(stmts2).toHaveLength(0)
+})

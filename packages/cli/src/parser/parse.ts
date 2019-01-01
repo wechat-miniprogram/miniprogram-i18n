@@ -5,7 +5,7 @@ export const enum CharCodes {
   SINGLE_QUOTE = 0x27,        // '
   DOUBLE_QUOTE = 0x22,        // "
   BACK_QUOTE = 0x60,          // `
-  BACK_SLASH= 0x5C,           // \
+  BACK_SLASH = 0x5C,           // \
 }
 
 class TranslationStatement {
@@ -34,24 +34,34 @@ export class TranslationBlockParser  {
   }
 
   parseTranslationBlock() {
-    if (this.match(CharCodes.LEFT_CURLY_BRACE) && this.matchNextChar(CharCodes.LEFT_CURLY_BRACE)) {
-      console.log('\n{{')
+    if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
       this.advance()
-      this.enterTranslationBlock()
+      // start block {{
+      if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
+        console.log('\n{{')
+        this.advance()
+        this.enterTranslationBlock()
+      } else {
+        // start object decl
+      }
     } else if (this.match(CharCodes.SINGLE_QUOTE)) {
       this.parseSingleQuoteString()
     } else if (this.match(CharCodes.DOUBLE_QUOTE)) {
       this.parseDoubleQuoteString()
     } else if (this.match(CharCodes.BACK_QUOTE)) {
       this.parseTemplateString()
-    } else if (
-      this.match(CharCodes.RIGHT_CURLY_BRACE) && this.matchNextChar(CharCodes.RIGHT_CURLY_BRACE)
-    ) {
-      console.log('\n}}')
-      const { start, end, block } = this.exitTranslationBlock()
+    } else if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
       this.advance()
-      console.log('block matched', block)
-      if (end > start && start !== -1) this.statements.push(new TranslationStatement(start, end, block))
+      // end block }}
+      if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
+        console.log('\n}}')
+        const { start, end, block } = this.exitTranslationBlock()
+        this.advance()
+        console.log('block matched', block)
+        if (end > start && start !== -1) this.statements.push(new TranslationStatement(start, end, block))
+      } else {
+        // end object decl
+      }
     } else {
       this.advance()
     }
