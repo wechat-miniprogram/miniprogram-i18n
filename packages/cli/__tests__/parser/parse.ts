@@ -99,18 +99,25 @@ test('parse with js type inside value', () => {
   expect(stmts[0].statement).toEqual(` t('key', { i: true, j: false, k: [], m: {}, n: undefined, h: null }) `)
 })
 
-// // FIXME
-// test('parse with nested object inside value', () => {
-//   // nested object may also contains double close braces
-//   const source = `{{ t('key', { val: { m: [], n: { m: { h: 'str' }}}}) }}`
-//   const parser = new TranslationBlockParser(source)
-//   const stmts = parser.parse()
-//   expect(stmts).toHaveLength(1)
-//   expect(stmts[0].statement).toEqual(` t('key', { val: { m: [], n: { m: { h: 'str' }}}}) `)
-// })
+test('parse with nested object inside value', () => {
+  // nested object may also contains double close braces
+  const source = `{{ t('key', { val: { m: [], n: { m: { h: 'str' }}}}) t('abc') }}`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(1)
+  expect(stmts[0].statement).toEqual(` t('key', { val: { m: [], n: { m: { h: 'str' }}}}) t('abc') `)
+})
 
 test('parse with t function in value field', () => {
   const source = `{{ t('key', { v: t('key2') }) }}`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(1)
+  expect(stmts[0].statement).toEqual(` t('key', { v: t('key2') }) `)
+})
+
+test('parser should ignore everything inside <wxs></wxs>', () => {
+  const source = `<wxs module="xxx"> {{ t() }} </wxs> <wxs>{{ k() }}</wxs>`
   const parser = new TranslationBlockParser(source)
   const stmts = parser.parse()
   expect(stmts).toHaveLength(1)
@@ -151,8 +158,8 @@ test('bad case: parse with only one brace', () => {
   const parser = new TranslationBlockParser(source)
   const stmts = parser.parse()
   expect(stmts).toHaveLength(0)
-  // const source2 = `}`
-  // const parser2 = new TranslationBlockParser(source2)
-  // const stmts2 = parser.parse()
-  // expect(stmts2).toHaveLength(0)
+  const source2 = `}`
+  const parser2 = new TranslationBlockParser(source2)
+  const stmts2 = parser.parse()
+  expect(stmts2).toHaveLength(0)
 })
