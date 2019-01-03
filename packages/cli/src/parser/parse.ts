@@ -63,13 +63,21 @@ export class TranslationBlockParser  {
         // JavaScript block should be ignored
         this.parseJavaScriptBlock()
       }
-    } else if (this.match(CharCodes.SINGLE_QUOTE)) {
+      return
+    }
+    if (this.match(CharCodes.SINGLE_QUOTE)) {
       this.parseSingleQuoteString()
-    } else if (this.match(CharCodes.DOUBLE_QUOTE)) {
+      return
+    }
+    if (this.match(CharCodes.DOUBLE_QUOTE)) {
       this.parseDoubleQuoteString()
-    } else if (this.match(CharCodes.BACK_QUOTE)) {
+      return
+    }
+    if (this.match(CharCodes.BACK_QUOTE)) {
       this.parseTemplateString()
-    } else if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
+      return
+    }
+    if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
       this.advance()
       // end block }}
       if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
@@ -78,15 +86,17 @@ export class TranslationBlockParser  {
         console.log('block matched', block)
         if (end > start && start !== -1) this.statements.push(new TranslationStatement(start, end, block))
       }
-    } else if (this.match(CharCodes.LESS_THAN)) {
+      return
+    }
+    if (this.match(CharCodes.LESS_THAN)) {
       const startTagEndPos = this.getWXMLStartTag(this.pos)
       if (startTagEndPos !== -1) {
         console.log('startTag', this.source.substring(this.pos, startTagEndPos + 1))
         this.parseWXMLStartTag()
       } else this.advance()
-    } else {
-      this.advance()
+      return
     }
+    this.advance()
   }
 
   parseJavaScriptBlock() {
