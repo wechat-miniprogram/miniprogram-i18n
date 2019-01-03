@@ -124,10 +124,14 @@ test('WXS: parser should ignore everything inside <wxs></wxs>', () => {
 })
 
 test('WXS: parser should identify self-closing WXS tag <wxs/>', () => {
-  const source = `<wxs/>`
-  const parser = new TranslationBlockParser(source)
-  const stmts = parser.parse()
-  expect(stmts).toHaveLength(0)
+  let source = `<wxs/>{{ t() }}`
+  let parser = new TranslationBlockParser(source)
+  let stmts = parser.parse()
+  expect(stmts).toHaveLength(1)
+  source = `<wxs /> {{t()}}`
+  parser = new TranslationBlockParser(source)
+  stmts = parser.parse()
+  expect(stmts).toHaveLength(1)
 })
 
 test('WXS: parser should have no ambiguity', () => {

@@ -8,7 +8,7 @@ export const enum CharCodes {
   BACK_SLASH = 0x5C,          // \
   SLASH = 0x2F,               // /
   LESS_THAN = 0x3C,           // <
-  GREATER_THAN = 0x3E,        // <
+  GREATER_THAN = 0x3E,        // >
   MINUS = 0x2D,               // -
   UNDER_LINE = 0x5F,          // _
 
@@ -67,6 +67,7 @@ export class TranslationBlockParser  {
       if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
         this.advance()
         this.enterTranslationBlock()
+        // TODO: parse function calls and pass it to transfomers
       } else {
         // JavaScript block should be ignored
         this.parseJavaScriptBlock()
@@ -80,7 +81,9 @@ export class TranslationBlockParser  {
         const { start, end, block } = this.exitTranslationBlock()
         this.advance()
         console.log('block matched', block)
-        if (end > start && start !== -1) this.statements.push(new TranslationStatement(start, end, block))
+        if (end > start && start !== -1) {
+          this.statements.push(new TranslationStatement(start, end, block))
+        }
       }
       return
     }
@@ -159,7 +162,7 @@ export class TranslationBlockParser  {
   }
 
   /**
-   * Nested object declaration may also contains doubble end braces,
+   * Nested object declaration may also contain double end braces,
    * thus object declaration should also be ignored.
    */
   parseObject() {
@@ -208,8 +211,12 @@ export class TranslationBlockParser  {
     while (this.isLetter(this.getCurrentCharCode()) || this.isWhiteSpace(this.getCurrentCharCode())) this.advance()
     const token = this.source.substring(start, this.pos).trim().toLowerCase()
     if (token !== WXS_LITERAL) return false
+    if (this.match(CharCodes.GREATER_THAN)) {
+      this.advance()
+      return true
+    }
     this.advance()
-    return true
+    return false
   }
 
   enterTranslationBlock() {
