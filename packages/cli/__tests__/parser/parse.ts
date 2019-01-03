@@ -116,12 +116,65 @@ test('parse with t function in value field', () => {
   expect(stmts[0].statement).toEqual(` t('key', { v: t('key2') }) `)
 })
 
-test('parser should ignore everything inside <wxs></wxs>', () => {
-  const source = `<wxs module="xxx"> {{ t() }} </wxs> <wxs>{{ k() }}</wxs>`
+test('WXS: parser should ignore everything inside <wxs></wxs>', () => {
+  const source = `<wxs module="xxx"> {{ t() }} </wxs><wxs>{{ k() }}</wxs><wxs/>`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+})
+
+test('WXS: parser should identify self-closing WXS tag <wxs/>', () => {
+  const source = `<wxs/>`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+})
+
+test('WXS: parser should have no ambiguity', () => {
+  let source = `<wxs module="</wxs>"> {{ t() }} </wxs>`
+  let parser = new TranslationBlockParser(source)
+  let stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+  source = `<wxs module='</wxs>'> {{ t() }} </wxs>`
+  parser = new TranslationBlockParser(source)
+  stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+})
+
+test('WXS: should allow space in tag', () => {
+  const source = `<  wxs module="test" > {{ t() }} </ wxs  >`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+})
+
+test('WXS: should allow uppercase tag', () => {
+  const source = `<WXS module="test"> {{ t() }} </WXS>`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(0)
+})
+
+test('WXS: should not affect other blocks', () => {
+  const source = `{{ k() }} <wxs module="test"> {{ t() }} </wxs> {{ t() }}`
+  const parser = new TranslationBlockParser(source)
+  const stmts = parser.parse()
+  expect(stmts).toHaveLength(2)
+})
+
+test('WXS: should not identify tags other than WXS', () => {
+  const source = `<view>{{ t() }}</view><wxs></wxs>`
   const parser = new TranslationBlockParser(source)
   const stmts = parser.parse()
   expect(stmts).toHaveLength(1)
-  expect(stmts[0].statement).toEqual(` t('key', { v: t('key2') }) `)
+})
+
+test('WXS: should throw error when WXS tag is invalid', () => {
+  const source = `<wxs><view>{{ t() }}</view>`
+  const parser = new TranslationBlockParser(source)
+  expect(() => {
+    parser.parse()
+  }).toThrow()
 })
 
 test('bad case: parse with empty block', () => {

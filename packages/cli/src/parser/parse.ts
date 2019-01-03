@@ -9,12 +9,21 @@ export const enum CharCodes {
   SLASH = 0x2F,               // /
   LESS_THAN = 0x3C,           // <
   GREATER_THAN = 0x3E,        // <
+  MINUS = 0x2D,               // -
+  UNDER_LINE = 0x5F,          // _
 
   TAB = 0x09,                 // \t
   LINE_FEED = 0x0A,           // \n
   CARRIAGE_RETURN = 0x0D,     // \r
   SPACE = 0x0020,             // " "
+
+  UPPER_A = 0x41,             // A
+  UPPER_Z = 0x5A,             // Z
+  LOWER_A = 0x61,             // a
+  LOWER_Z = 0x7A,             // a
 }
+
+export const WXS_LITERAL = 'wxs'
 
 class TranslationStatement {
   constructor(
@@ -40,7 +49,6 @@ class TranslationStatement {
 export class TranslationBlockParser  {
   private pos: number = 0
   private blockStart: number = -1
-  private _blockCount: number = 0
   private statements: TranslationStatement[] = []
 
   constructor(
@@ -65,18 +73,6 @@ export class TranslationBlockParser  {
       }
       return
     }
-    if (this.match(CharCodes.SINGLE_QUOTE)) {
-      this.parseSingleQuoteString()
-      return
-    }
-    if (this.match(CharCodes.DOUBLE_QUOTE)) {
-      this.parseDoubleQuoteString()
-      return
-    }
-    if (this.match(CharCodes.BACK_QUOTE)) {
-      this.parseTemplateString()
-      return
-    }
     if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
       this.advance()
       // end block }}
@@ -89,11 +85,25 @@ export class TranslationBlockParser  {
       return
     }
     if (this.match(CharCodes.LESS_THAN)) {
-      const startTagEndPos = this.getWXMLStartTag(this.pos)
-      if (startTagEndPos !== -1) {
-        console.log('startTag', this.source.substring(this.pos, startTagEndPos + 1))
-        this.parseWXMLStartTag()
+      if (this.isWXSStartTag(this.pos)) {
+        const ret = this.parseWXSStartTag()
+        console.log('@@@@ ret:', ret)
+        if (!ret) {
+          throw new Error('closing tag of <wxs> is not found')
+        }
       } else this.advance()
+      return
+    }
+    if (this.match(CharCodes.SINGLE_QUOTE)) {
+      this.parseSingleQuoteString()
+      return
+    }
+    if (this.match(CharCodes.DOUBLE_QUOTE)) {
+      this.parseDoubleQuoteString()
+      return
+    }
+    if (this.match(CharCodes.BACK_QUOTE)) {
+      this.parseTemplateString()
       return
     }
     this.advance()
@@ -161,24 +171,45 @@ export class TranslationBlockParser  {
     }
   }
 
-  parseWXMLStartTag() {
+  parseWXSStartTag() {
+    // Assume wxs tag will not be nested
     console.log('@@@ WXS start tag found')
     while (!this.eof()) {
-      this.advance()
+      if (this.match(CharCodes.SINGLE_QUOTE)) {
+        this.parseSingleQuoteString()
+      } else if (this.match(CharCodes.DOUBLE_QUOTE)) {
+        this.parseDoubleQuoteString()
+      } else if (this.match(CharCodes.BACK_QUOTE)) {
+        this.parseTemplateString()
+      } else this.advance()
       if (this.match(CharCodes.SLASH)) {
         this.advance()
-        // <string />
+        // <wxs />
         if (this.match(CharCodes.GREATER_THAN)) {
           this.advance()
-          return
+          return true
         }
       }
       if (this.match(CharCodes.LESS_THAN)) {
-        if (this.isWXMLEndTag(this.pos)) {
-          console.log('@@@ WXS end tag found')
+        this.advance()
+        // </
+        if (this.match(CharCodes.SLASH)) {
+          return this.parseWXSEndTag()
         }
       }
     }
+    return false
+  }
+
+  parseWXSEndTag() {
+    // </   wxs   >
+    this.advance()
+    const start = this.pos
+    while (this.isLetter(this.getCurrentCharCode()) || this.isWhiteSpace(this.getCurrentCharCode())) this.advance()
+    const token = this.source.substring(start, this.pos).trim().toLowerCase()
+    if (token !== WXS_LITERAL) return false
+    this.advance()
+    return true
   }
 
   enterTranslationBlock() {
@@ -196,47 +227,30 @@ export class TranslationBlockParser  {
     return { start, end, block }
   }
 
-  getWXMLStartTag(pos: number) {
-    if (!this.match(CharCodes.LESS_THAN, pos)) return -1
+  isWXSStartTag(pos: number) {
+    if (!this.match(CharCodes.LESS_THAN, pos)) return false
+
     pos++
+    pos = this.skipWhiteSpaces(pos)
 
-    this.skipWhiteSpaces(pos)
-
-    // <string
+    // <wxs
+    const start = pos
     while (this.isLetter(this.source.charCodeAt(pos))) pos++
-    this.skipWhiteSpaces(pos)
-
-    // TODO: how we should do to self-close tag
-    // <string /
-    if (this.match(CharCodes.SLASH, pos)) {
-      pos++
-    }
-    // >
-    if (this.match(CharCodes.GREATER_THAN, pos)) {
-      return pos
-    }
-    return -1
-  }
-
-  isWXMLEndTag(pos: number) {
-    pos++
-
-    this.skipWhiteSpaces(pos)
-    // not </
-    if (!this.match(CharCodes.SLASH, pos)) {
+    const token = this.source.substring(start, pos).toLowerCase()
+    if (token !== WXS_LITERAL) {
       return false
     }
 
-    pos++
-
-    // </string
-    while (this.isLetter(this.source.charCodeAt(pos))) pos++
-
-    this.skipWhiteSpaces(pos)
-
-    // >
-    if (this.match(CharCodes.GREATER_THAN, pos)) {
-      return true
+    // proceed to find /> or >
+    while (pos <= this.source.length) {
+      pos++
+      // />
+      if (this.match(CharCodes.SLASH, pos) && this.match(CharCodes.GREATER_THAN, pos)) {
+        return true
+      }
+      if (this.match(CharCodes.GREATER_THAN, pos)) {
+        return true
+      }
     }
     return false
   }
@@ -245,28 +259,38 @@ export class TranslationBlockParser  {
     return this.source.charCodeAt(pos && pos !== -1 ? pos : this.pos) === code
   }
 
-  // FIXME: remove this unnecessary helper function
   matchNextChar(code: CharCodes) {
     return this.source.charCodeAt(++this.pos) === code
   }
 
   isLetter(code: number) {
-    return (code >= 0x41 && code <= 0x5A) ||    // A-Z
-      (code >= 0x61 && code <= 0x7A) ||         // a-z
-      code === 0x2D ||                          // -
-      code === 0x5F                             // _
+    return (code >= CharCodes.UPPER_A && code <= CharCodes.UPPER_Z) ||    // A-Z
+      (code >= CharCodes.LOWER_A && code <= CharCodes.LOWER_Z) ||         // a-z
+      code === CharCodes.MINUS ||                                         // -
+      code === CharCodes.UNDER_LINE                                       // _
   }
 
-  skipWhiteSpaces(pos?: number) {
+  isWhiteSpace(pos: number) {
+   return this.match(CharCodes.SPACE, pos) ||
+      this.match(CharCodes.TAB, pos) ||
+      this.match(CharCodes.LINE_FEED, pos) ||
+      this.match(CharCodes.CARRIAGE_RETURN, pos)
+  }
+
+  skipWhiteSpaces(pos: number) {
     while (
       this.match(CharCodes.SPACE, pos) ||
       this.match(CharCodes.TAB, pos) ||
       this.match(CharCodes.LINE_FEED, pos) ||
       this.match(CharCodes.CARRIAGE_RETURN, pos)
     ) {
-      if (pos) pos++
-      else this.advance()
+      pos++
     }
+    return pos
+  }
+
+  getCurrentCharCode() {
+    return this.source.charCodeAt(this.pos)
   }
 
   advance() {
