@@ -9,6 +9,33 @@ test('parse basic t func', () => {
   expect(callExpression).toHaveLength(1)
 })
 
+test('parse basic t func with other expressions', () => {
+  const source = `abc + {{ t() }} + def`
+  const parser = new TranslationBlockParser(source)
+  const { expression, callExpression } = parser.parse()
+  expect(expression).toHaveLength(1)
+  expect(expression[0].statement).toEqual(' t() ')
+  expect(callExpression).toHaveLength(1)
+})
+
+test('parse basic t func with multiple expressions inside', () => {
+  const source = `{{ t() +t2() + t3() }}`
+  const parser = new TranslationBlockParser(source)
+  const { expression, callExpression } = parser.parse()
+  expect(expression).toHaveLength(1)
+  expect(expression[0].statement).toEqual(' t() +t2() + t3() ')
+  expect(callExpression).toHaveLength(3)
+})
+
+test('parse basic t func with wxs calls', () => {
+  const source = `{{ t() + wxs.t() + t3() }}`
+  const parser = new TranslationBlockParser(source)
+  const { expression, callExpression } = parser.parse()
+  expect(expression).toHaveLength(1)
+  expect(expression[0].statement).toEqual(' t() + wxs.t() + t3() ')
+  expect(callExpression).toHaveLength(2)
+})
+
 test('parse multiple translation block', () => {
   const source = `{{t()}} {{ t( ) }} {{ t() }}{{t()}}`
   const parser = new TranslationBlockParser(source)

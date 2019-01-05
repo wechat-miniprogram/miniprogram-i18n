@@ -128,9 +128,10 @@ export default class ExpressionParser extends Parser {
   }
 
   isFunctionCallExpression(pos: number) {
-    while (--pos >= 0 && !isWhitespace(this.source.charCodeAt(pos)) && !this.match(CharCodes.LEFT_CURLY_BRACE, pos)) {
-      // maybe wxs call
-      if (!isValidFunctionLiteralChar(this.source.charCodeAt(pos))) return -1
+    while (--pos >= 0) {
+      // maybe wxs call {{ a.b() }}
+      if (this.match(CharCodes.DOT, pos)) return -1
+      if (!isValidFunctionLiteralChar(this.source.charCodeAt(pos))) break
     }
     return pos + 1
   }
