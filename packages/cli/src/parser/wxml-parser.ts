@@ -84,7 +84,7 @@ export default class WxmlParser {
       if (this.consumeChar() !== CharCodes.GREATER_THAN) {
         throw new Error('unexpected character ' + this.currentChar())
       }
-      this.advance()
+      console.log('@@@ self closing tag found', this.currentChar())
       return new Element(tagName, attributes, null)
     }
     if (this.consumeChar() !== CharCodes.GREATER_THAN) {
@@ -92,6 +92,7 @@ export default class WxmlParser {
     }
 
     const childNodes = this.parse()
+    console.log('@@@@@@ current char:', this.currentChar())
 
     if (this.consumeChar() !== CharCodes.LESS_THAN) {
       throw new Error('expected char ' + String.fromCharCode(CharCodes.LESS_THAN) + ' but got ' + this.currentChar())
@@ -148,18 +149,25 @@ export default class WxmlParser {
 
   parseAttribute() {
     const name = this.parseTagName()
-    console.log('@@@@@@@ name:', name)
+    this.consumeWhitespace()
     // TODO: may not have values
-    if (this.consumeChar() !== CharCodes.EQUALS) {
-      throw new Error('expected char ' + String.fromCharCode(CharCodes.EQUALS) + ' but got ' + this.currentChar())
+    if (!this.match(CharCodes.EQUALS)) {
+      return { name, value: null }
     }
+    this.advance()
     const value = this.parseAttrValue()
     return { name, value }
   }
 
   parseAttrValue() {
     const leftQuote = this.consumeChar()
-    assert(leftQuote === CharCodes.SINGLE_QUOTE || leftQuote === CharCodes.DOUBLE_QUOTE)
+    if (leftQuote !== CharCodes.SINGLE_QUOTE && leftQuote !== CharCodes.DOUBLE_QUOTE) {
+      throw new Error(
+        `expected char ${String.fromCharCode(CharCodes.SINGLE_QUOTE)} or ${String.fromCharCode(CharCodes.DOUBLE_QUOTE)} ` +
+        `but got ${String.fromCharCode(leftQuote)}`,
+      )
+    }
+    // TODO: consider escaped quote, escaped quote should not interrupt parsing
     const value = this.consumeWhile(ch => ch !== leftQuote)
     if (this.consumeChar() !== leftQuote) {
       throw new Error('expected char ' + String.fromCharCode(leftQuote) + ' but got ' + this.currentChar())

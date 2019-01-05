@@ -29,3 +29,15 @@ test('wxml parser: self closing tag', () => {
   const node = p.parse()
   console.log('node:', node[0])
 })
+
+test('wxml parser: nested self closing tag', () => {
+  const p = new WxmlParser(`<view><input/></view>`)
+  const node = p.parse()
+  console.log('node:', node[0])
+})
+
+test('wxml parser: attribute without value', () => {
+  const p = new WxmlParser(`<input disabled />`)
+  const node = p.parse()
+  console.log('node:', node[0])
+})
