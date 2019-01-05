@@ -1,4 +1,6 @@
-import { CharCodes } from './char-codes'
+import { CharCodes } from './types'
+import Parser from './parser'
+import { isLetter, isNumber } from './utils'
 
 interface Dumpable {
   dump(): object
@@ -55,13 +57,17 @@ export const enum WxmlState {
   WXS = 0x02,
 }
 
-export default class WxmlParser {
-  private pos: number = 0
+/**
+ * Simple wxml parser
+ */
+export default class WxmlParser extends Parser {
   private state: WxmlState = WxmlState.NORMAL
 
   constructor(
     public source: string,
-  ) { }
+  ) {
+    super(source)
+  }
 
   parse() {
     const nodes: Array<Node> = []
@@ -158,15 +164,7 @@ export default class WxmlParser {
     if (this.state === WxmlState.WXS) {
       const start = this.pos
       while (!this.eof() && !this.match(CharCodes.LESS_THAN)) {
-        if (this.match(CharCodes.SINGLE_QUOTE) || this.match(CharCodes.DOUBLE_QUOTE) || this.match(CharCodes.BACK_QUOTE)) {
-          const quoteType = this.consumeChar()
-          while (!this.eof() && !this.match(quoteType)) {
-            if (this.match(CharCodes.BACK_SLASH) && this.match(quoteType, this.pos + 1)) {
-              this.advance(2)
-            }
-            this.advance()
-          }
-        }
+        this.consumeQuoteString()
         this.advance()
       }
       return new Text(this.source.substring(start, this.pos))
@@ -194,14 +192,14 @@ export default class WxmlParser {
   parseTagName() {
     // loosy check
     // TODO: prevent number as first letter
-    return this.consumeWhile(c => this.isLetter(c) || this.isNumber(c))
+    return this.consumeWhile(c => isLetter(c) || isNumber(c))
   }
 
   parseAttributeName() {
     // loosy check
     // TODO: prevent number as first letter
     // Note: can have colon (:) in between
-    return this.consumeWhile(c => this.isLetter(c) || this.isNumber(c) || c === CharCodes.COLON)
+    return this.consumeWhile(c => isLetter(c) || isNumber(c) || c === CharCodes.COLON)
   }
 
   parseAttributes() {
@@ -209,7 +207,7 @@ export default class WxmlParser {
     while (!this.eof()) {
       this.consumeWhitespace()
       if (this.match(CharCodes.SLASH) || this.match(CharCodes.GREATER_THAN)) break
-      if (!this.isLetter(this.peekCharCode()) && !this.match(CharCodes.COLON)) break
+      if (!isLetter(this.peekCharCode()) && !this.match(CharCodes.COLON)) break
       const { name, value } = this.parseAttribute()
       attrs.set(name, value)
     }
@@ -241,67 +239,5 @@ export default class WxmlParser {
       throw new Error('expected char ' + String.fromCharCode(leftQuote) + ' to close an attribute')
     }
     return value
-  }
-
-  isWhitespace(code: number) {
-    return CharCodes.SPACE === code ||
-      CharCodes.TAB === code ||
-      CharCodes.LINE_FEED === code ||
-      CharCodes.CARRIAGE_RETURN === code
-  }
-
-  isLetter(code: number) {
-    return (code >= CharCodes.UPPER_A && code <= CharCodes.UPPER_Z) ||    // A-Z
-      (code >= CharCodes.LOWER_A && code <= CharCodes.LOWER_Z) ||         // a-z
-      code === CharCodes.MINUS ||                                         // -
-      code === CharCodes.UNDER_LINE                                       // _
-  }
-
-  isNumber(code: number) {
-    return code >= CharCodes._0 && code <= CharCodes._9    // 0-9
-  }
-
-  match(code: CharCodes, pos?: number) {
-    return this.source.charCodeAt(pos && pos !== -1 ? pos : this.pos) === code
-  }
-
-  currentChar() {
-    return this.source[this.pos]
-  }
-
-  peekCharCode() {
-    return this.source.charCodeAt(this.pos)
-  }
-
-  consumeChar() {
-    const ch = this.source.charCodeAt(this.pos)
-    this.advance()
-    return ch
-  }
-
-  consumeWhitespace() {
-    this.consumeWhile(this.isWhitespace)
-  }
-
-  consumeWhile(checkFunc: (a: number) => boolean) {
-    const result: Array<string> = []
-    while (!this.eof() && checkFunc(this.source.charCodeAt(this.pos))) {
-      const ch = this.source[this.pos]
-      this.advance()
-      result.push(ch)
-    }
-    return result.join('')
-  }
-
-  advance(step?: number) {
-    if (!step) {
-      this.pos++
-    } else {
-      while (step-- > 0) this.pos++
-    }
-  }
-
-  eof() {
-    return this.pos >= this.source.length
   }
 }

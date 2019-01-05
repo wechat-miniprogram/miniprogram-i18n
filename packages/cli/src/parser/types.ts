@@ -13,6 +13,9 @@ export const enum CharCodes {
   EQUALS = 0x3D,              // =
   EXCLAMATION = 0x21,         // !
   COLON = 0x3A,               // :
+  LEFT_PAREN = 0x28,          // (
+  RIGHT_PAREN = 0x29,         // (
+  DOT = 0x2E,                 // .
 
   TAB = 0x09,                 // \t
   LINE_FEED = 0x0A,           // \n
@@ -26,4 +29,5 @@ export const enum CharCodes {
 
   _0 = 0x30,
   _9 = 0x39,
+  $ = 0x24,
 }
