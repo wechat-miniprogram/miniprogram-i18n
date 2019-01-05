@@ -48,8 +48,17 @@ export class Text extends Node implements Dumpable {
   }
 }
 
+export const WXS_LITERAL = 'wxs'
+
+export const enum WxmlState {
+  NORMAL = 0x01,
+  WXS = 0x02,
+}
+
 export default class WxmlParser {
   private pos: number = 0
+  private state: WxmlState = WxmlState.NORMAL
+
   constructor(
     public source: string,
   ) { }
@@ -74,16 +83,15 @@ export default class WxmlParser {
         this.parseComments()
         continue
       }
-      nodes.push(this.parseNode())
+      if (this.match(CharCodes.LESS_THAN)) {
+        const node = this.parseWxmlTag()
+        nodes.push(node)
+        continue
+      }
+      const textNode = this.parseText()
+      nodes.push(textNode)
     }
     return nodes
-  }
-
-  parseNode() {
-    if (this.match(CharCodes.LESS_THAN)) {
-      return this.parseWxmlTag()
-    }
-    return this.parseText()
   }
 
   parseWxmlTag() {
@@ -92,8 +100,12 @@ export default class WxmlParser {
     }
 
     this.consumeWhitespace()
+
     const tagName =  this.parseTagName()
-    // TODO: ignore wxs tag
+    if (!tagName || tagName.length === 0)  {
+      throw new Error(`unexpected tag name ${this.currentChar()}`)
+    }
+
     const attributes = this.parseAttributes()
 
     console.log('tagName:', tagName, this.currentChar())
@@ -109,6 +121,10 @@ export default class WxmlParser {
     }
     if (this.consumeChar() !== CharCodes.GREATER_THAN) {
       throw new Error('expected character > to close a tag')
+    }
+
+    if (tagName.toLowerCase() === WXS_LITERAL) {
+      this.state = WxmlState.WXS
     }
 
     const childNodes = this.parse()
@@ -130,17 +146,42 @@ export default class WxmlParser {
 
     this.consumeWhitespace()
 
-    if (this.consumeChar() !== CharCodes.GREATER_THAN) {
+    if (!this.match(CharCodes.GREATER_THAN)) {
       throw new Error('expected char ' + String.fromCharCode(CharCodes.GREATER_THAN) + ' but got ' + this.currentChar())
+    }
+
+    this.advance()
+
+    if (tagName.toLowerCase() === WXS_LITERAL) {
+      this.state = WxmlState.NORMAL
     }
 
     return new Element(tagName, attributes, childNodes)
   }
 
   parseText() {
+    if (this.state === WxmlState.WXS) {
+      const start = this.pos
+      while (!this.eof() && !this.match(CharCodes.LESS_THAN)) {
+        if (this.match(CharCodes.SINGLE_QUOTE) || this.match(CharCodes.DOUBLE_QUOTE) || this.match(CharCodes.BACK_QUOTE)) {
+          const quoteType = this.consumeChar()
+          while (!this.eof() && !this.match(quoteType)) {
+            if (this.match(CharCodes.BACK_SLASH) && this.match(quoteType, this.pos + 1)) {
+              this.advance(2)
+            }
+            this.advance()
+          }
+        }
+        this.advance()
+      }
+      return new Text(this.source.substring(start, this.pos))
+    }
     return new Text(this.consumeWhile(ch => ch !== CharCodes.LESS_THAN))
   }
 
+  /**
+   * Ignore comments
+   */
   parseComments() {
     while (!this.eof()) {
       if (
@@ -156,7 +197,16 @@ export default class WxmlParser {
   }
 
   parseTagName() {
-    return this.consumeWhile(this.isLetter)
+    // loosy check
+    // TODO: prevent number as first letter
+    return this.consumeWhile(c => this.isLetter(c) || this.isNumber(c))
+  }
+
+  parseAttributeName() {
+    // loosy check
+    // TODO: prevent number as first letter
+    // Note: can have colon (:) in between
+    return this.consumeWhile(c => this.isLetter(c) || this.isNumber(c) || c === CharCodes.COLON)
   }
 
   parseAttributes() {
@@ -164,6 +214,7 @@ export default class WxmlParser {
     while (!this.eof()) {
       this.consumeWhitespace()
       if (this.match(CharCodes.SLASH) || this.match(CharCodes.GREATER_THAN)) break
+      if (!this.isLetter(this.peekCharCode()) && !this.match(CharCodes.COLON)) break
       const { name, value } = this.parseAttribute()
       attrs.set(name, value)
     }
@@ -171,9 +222,8 @@ export default class WxmlParser {
   }
 
   parseAttribute() {
-    const name = this.parseTagName()
+    const name = this.parseAttributeName()
     this.consumeWhitespace()
-    // TODO: may not have values
     if (!this.match(CharCodes.EQUALS)) {
       return { name, value: null }
     }
@@ -193,7 +243,7 @@ export default class WxmlParser {
     }
     const value = this.consumeWhile(ch => ch !== leftQuote)
     if (this.consumeChar() !== leftQuote) {
-      throw new Error('expected char ' + String.fromCharCode(leftQuote) + ' but got ' + this.currentChar())
+      throw new Error('expected char ' + String.fromCharCode(leftQuote) + ' to close an attribute')
     }
     return value
   }
@@ -212,11 +262,14 @@ export default class WxmlParser {
       code === CharCodes.UNDER_LINE                                       // _
   }
 
+  isNumber(code: number) {
+    return code >= CharCodes._0 && code <= CharCodes._9    // 0-9
+  }
+
   match(code: CharCodes, pos?: number) {
     return this.source.charCodeAt(pos && pos !== -1 ? pos : this.pos) === code
   }
 
-  // for debug
   currentChar() {
     return this.source[this.pos]
   }

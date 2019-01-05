@@ -1,41 +1,5 @@
 import WxmlParser from '../../src/parser/wxml-parser'
 
-test('wxml parser', () => {
-  const p = new WxmlParser(`<view>abc</view>`)
-  const node = p.parse()
-  console.log('node:', node[0])
-})
-
-test('wxml parser nested case', () => {
-  const p = new WxmlParser(`<view>abc<view class="test"></view></view><view>hello?</view>`)
-  const node = p.parse()
-  console.log('node:', node)
-})
-
-test('wxml parser: should ignore comments', () => {
-  const p = new WxmlParser(`<view><!-- abcd -->real content</view>`)
-  const node = p.parse()
-  console.log('node:', node[0])
-})
-
-test('wxml parser: self closing tag', () => {
-  const p = new WxmlParser(`<input class="test" />`)
-  const node = p.parse()
-  console.log('node:', node[0])
-})
-
-test('wxml parser: nested self closing tag', () => {
-  const p = new WxmlParser(`<view><input/></view>`)
-  const node = p.parse()
-  console.log('node:', node[0])
-})
-
-test('wxml parser: attribute without value', () => {
-  const p = new WxmlParser(`<input disabled />`)
-  const node = p.parse()
-  console.log('node:', node[0].dump())
-})
-
 const testCases = [
   {
     name: 'plain text',
@@ -199,6 +163,11 @@ const testCases = [
     expected: [{ type: 'VIEW', attributes: {}, children: [{ type: 'text', content: 'test' }] }],
   },
   {
+    name: 'tag name with number',
+    input: '<view2></view2>',
+    expected: [{ type: 'view2', attributes: {}, children: [] }],
+  },
+  {
     name: 'mixed case tag',
     input: '<View>test</View>',
     expected: [{ type: 'View', attributes: {}, children: [{ type: 'text', content: 'test' }] }],
@@ -214,6 +183,16 @@ const testCases = [
     expected: [{ type: 'view', attributes: { class: 'TEST' }, children: [] }],
   },
   {
+    name: 'attribute key with number',
+    input: '<view class2="TEST"></view>',
+    expected: [{ type: 'view', attributes: { class2: 'TEST' }, children: [] }],
+  },
+  {
+    name: 'attribute key with colon',
+    input: '<view wx:if="{{true}}"></view>',
+    expected: [{ type: 'view', attributes: { 'wx:if': '{{true}}' }, children: [] }],
+  },
+  {
     name: 'multiple line tag',
     input: '<view \n class="test" \n>\nabc\ndef</view>',
     expected: [{ type: 'view', attributes: { class: 'test' }, children: [{ type: 'text', content: 'abc\ndef' }] }],
@@ -225,14 +204,59 @@ const testCases = [
   },
   {
     name: 'wxs tag should be ignored',
-    input: '<wxs> var a = 1; var b = 2; </wxs>',
-    expected: [],
+    input: '<view></view>test</view>',
+    expected: [{type: 'view', attributes: {}, children: []}, { type: 'text', content: 'test' }],
   },
-  // {
-  //   name: 'unfinished tag',
-  //   input: '<view></view>',
-  //   expected: [{ type: 'view', attributes: { class: '</view>' }, children: [] }],
-  // },
+  {
+    name: 'wxs tag should be ignored',
+    input: "<wxs>var a = 1; var b = '</wxs>'</wxs>",
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var a = 1; var b = \'</wxs>\'' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored 2',
+    input: '<wxs>var s = "</wxs>"</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var s = "</wxs>"' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored 3',
+    input: '<wxs>var s = `<wxs></wxs>`</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var s = `<wxs></wxs>`' }] }],
+  },
+  {
+    name: 'unfinished tag',
+    input: '<view',
+    expectThrows: true,
+  },
+  {
+    name: 'unfinished tag 2',
+    input: '<view ',
+    expectThrows: true,
+  },
+  {
+    name: 'unfinished tag 3',
+    input: '<view $',
+    expectThrows: true,
+  },
+  {
+    name: 'unfinished tag with normal tag afterwards',
+    input: '<view<view></view>',
+    expectThrows: true,
+  },
+  {
+    name: 'unfinished attributes',
+    input: '<view class="></view>',
+    expectThrows: true,
+  },
+  {
+    name: 'unfinished attributes',
+    input: '<view class=></view>',
+    expectThrows: true,
+  },
+  {
+    name: 'invalid end tag',
+    input: '<view></view 123>',
+    expectThrows: true,
+  },
 ]
 
 // TODO: Test Chinese / unicode
@@ -240,6 +264,12 @@ const testCases = [
 testCases.forEach((testCase) => {
   test(`WXML parser: ${testCase.name}`, () => {
     const p = new WxmlParser(testCase.input)
+    if (testCase.expectThrows) {
+      expect(() => {
+        const nodes = p.parse()
+      }).toThrow()
+      return
+    }
     const nodes = p.parse()
     const dumpedNodes = nodes.map(node => node.dump())
     expect(dumpedNodes).toEqual(testCase.expected)

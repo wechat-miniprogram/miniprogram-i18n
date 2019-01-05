@@ -12,6 +12,7 @@ export const enum CharCodes {
   UNDER_LINE = 0x5F,          // _
   EQUALS = 0x3D,              // =
   EXCLAMATION = 0x21,         // !
+  COLON = 0x3A,               // :
 
   TAB = 0x09,                 // \t
   LINE_FEED = 0x0A,           // \n
@@ -22,4 +23,7 @@ export const enum CharCodes {
   UPPER_Z = 0x5A,             // Z
   LOWER_A = 0x61,             // a
   LOWER_Z = 0x7A,             // a
+
+  _0 = 0x30,
+  _9 = 0x39,
 }
