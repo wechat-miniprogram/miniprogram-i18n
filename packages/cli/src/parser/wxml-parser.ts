@@ -1,31 +1,50 @@
 import { CharCodes } from './char-codes'
 
-const assert = (expr: boolean) => {
-  if (!expr) throw new Error()
+interface Dumpable {
+  dump(): object
 }
 
-export class Node {
+export class Node implements Dumpable {
   constructor(
     public tagName: string,
   ) {}
-}
 
-export class Element extends Node {
-  constructor(
-    tagName: string,
-    public attributes: Map<string, string> | null = null,
-    public children: Array<Node> | null,
-  ) {
-    super(tagName)
+  dump() {
+    return { type: this.tagName }
   }
 }
 
-export class Text extends Node {
+export class Element extends Node implements Dumpable {
+  constructor(
+    tagName: string,
+    public attributes: Map<string, string>,
+    public children: Array<Node>,
+  ) {
+    super(tagName)
+  }
+
+  dump() {
+    const attributes: any = {}
+    if (this.attributes) {
+      for (const [key, value] of this.attributes) {
+        attributes[key] = value
+      }
+    }
+    const children = this.children.map(child => child.dump())
+    return { type: this.tagName, attributes, children }
+  }
+}
+
+export class Text extends Node implements Dumpable {
   private static tagName: string = 'text'
   constructor(
     public content: string,
   ) {
     super(Text.tagName)
+  }
+
+  dump() {
+    return { type: this.tagName, content: this.content }
   }
 }
 
@@ -72,6 +91,7 @@ export default class WxmlParser {
       throw new Error('unexpected character for wxml start tag')
     }
 
+    this.consumeWhitespace()
     const tagName =  this.parseTagName()
     // TODO: ignore wxs tag
     const attributes = this.parseAttributes()
@@ -85,10 +105,10 @@ export default class WxmlParser {
         throw new Error('unexpected character ' + this.currentChar())
       }
       console.log('@@@ self closing tag found', this.currentChar())
-      return new Element(tagName, attributes, null)
+      return new Element(tagName, attributes, [])
     }
     if (this.consumeChar() !== CharCodes.GREATER_THAN) {
-      throw new Error('unexpected character ' + this.currentChar())
+      throw new Error('expected character > to close a tag')
     }
 
     const childNodes = this.parse()
@@ -102,10 +122,13 @@ export default class WxmlParser {
       throw new Error('expected char ' + String.fromCharCode(CharCodes.SLASH) + ' but got ' + this.currentChar())
     }
 
+    this.consumeWhitespace()
     const endTagName = this.parseTagName()
     if (endTagName !== tagName) {
       throw new Error(`expected tag name ${tagName} but got ${endTagName}`)
     }
+
+    this.consumeWhitespace()
 
     if (this.consumeChar() !== CharCodes.GREATER_THAN) {
       throw new Error('expected char ' + String.fromCharCode(CharCodes.GREATER_THAN) + ' but got ' + this.currentChar())
@@ -155,6 +178,7 @@ export default class WxmlParser {
       return { name, value: null }
     }
     this.advance()
+    this.consumeWhitespace()
     const value = this.parseAttrValue()
     return { name, value }
   }
@@ -167,7 +191,6 @@ export default class WxmlParser {
         `but got ${String.fromCharCode(leftQuote)}`,
       )
     }
-    // TODO: consider escaped quote, escaped quote should not interrupt parsing
     const value = this.consumeWhile(ch => ch !== leftQuote)
     if (this.consumeChar() !== leftQuote) {
       throw new Error('expected char ' + String.fromCharCode(leftQuote) + ' but got ' + this.currentChar())
