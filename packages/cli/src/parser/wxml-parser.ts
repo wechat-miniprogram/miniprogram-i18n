@@ -78,7 +78,6 @@ export default class WxmlParser {
         this.match(CharCodes.MINUS, this.pos + 2) &&
         this.match(CharCodes.MINUS, this.pos + 3)
       ) {
-        console.log('match <!--')
         this.advance(4)
         this.parseComments()
         continue
@@ -89,7 +88,7 @@ export default class WxmlParser {
         continue
       }
       const textNode = this.parseText()
-      nodes.push(textNode)
+      if (textNode.content.length > 0) nodes.push(textNode)
     }
     return nodes
   }
@@ -108,15 +107,12 @@ export default class WxmlParser {
 
     const attributes = this.parseAttributes()
 
-    console.log('tagName:', tagName, this.currentChar())
-
     // self-closing tag
     if (this.match(CharCodes.SLASH)) {
       this.advance()
       if (this.consumeChar() !== CharCodes.GREATER_THAN) {
         throw new Error('unexpected character ' + this.currentChar())
       }
-      console.log('@@@ self closing tag found', this.currentChar())
       return new Element(tagName, attributes, [])
     }
     if (this.consumeChar() !== CharCodes.GREATER_THAN) {
@@ -128,7 +124,6 @@ export default class WxmlParser {
     }
 
     const childNodes = this.parse()
-    console.log('@@@@@@ current char:', this.currentChar())
 
     if (this.consumeChar() !== CharCodes.LESS_THAN) {
       throw new Error('expected char ' + String.fromCharCode(CharCodes.LESS_THAN) + ' but got ' + this.currentChar())
