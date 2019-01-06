@@ -43,6 +43,11 @@ const testCases = [
     input: `<view data-test="{{ t('key', { t: t('key2') }) }}"></view>`,
     expected: `<view data-test="{{ ${tt}('key', { t: ${tt}('key2') }) }}"></view>`,
   },
+  {
+    name: 'do not transform t func in object',
+    input: `<view data-test="{{ test.t('key', { t: test.t('key2') }) }}"></view>`,
+    expected: `<view data-test="{{ test.t('key', { t: test.t('key2') }) }}"></view>`,
+  },
 ]
 
 testCases.forEach(testCase => {
