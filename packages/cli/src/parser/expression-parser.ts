@@ -48,7 +48,7 @@ export default class ExpressionParser extends Parser {
       }
       this.advance()
     }
-    return { expression: this.expressions, callExpression: this.callExpressions }
+    return { expression: this.expressions, callExpressions: this.callExpressions }
   }
 
   /**

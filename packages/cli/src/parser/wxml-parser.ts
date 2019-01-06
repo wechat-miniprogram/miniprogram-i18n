@@ -1,6 +1,7 @@
 import { CharCodes } from './types'
 import Parser from './parser'
 import { isLetter, isNumber } from './utils'
+import { Nullable } from '../types'
 
 interface Dumpable {
   dump(): object
@@ -16,10 +17,18 @@ export class Node implements Dumpable {
   }
 }
 
+export class AttributeValue {
+  constructor(
+    public value: string,
+    public start: number,
+    public end: number,
+  ) {}
+}
+
 export class Element extends Node implements Dumpable {
   constructor(
     tagName: string,
-    public attributes: Map<string, string>,
+    public attributes: Map<string, Nullable<AttributeValue>>,
     public children: Array<Node>,
   ) {
     super(tagName)
@@ -29,7 +38,9 @@ export class Element extends Node implements Dumpable {
     const attributes: any = {}
     if (this.attributes) {
       for (const [key, value] of this.attributes) {
-        attributes[key] = value
+        if (value && value.value) {
+          attributes[key] = value.value
+        }
       }
     }
     const children = this.children.map(child => child.dump())
@@ -41,6 +52,8 @@ export class Text extends Node implements Dumpable {
   private static tagName: string = 'text'
   constructor(
     public content: string,
+    public start: number,
+    public end: number,
   ) {
     super(Text.tagName)
   }
@@ -161,15 +174,15 @@ export default class WxmlParser extends Parser {
   }
 
   parseText() {
+    const start = this.pos
     if (this.state === WxmlState.WXS) {
-      const start = this.pos
       while (!this.eof() && !this.match(CharCodes.LESS_THAN)) {
         this.consumeQuoteString()
         this.advance()
       }
-      return new Text(this.source.substring(start, this.pos))
+      return new Text(this.source.substring(start, this.pos), start, this.pos)
     }
-    return new Text(this.consumeWhile(ch => ch !== CharCodes.LESS_THAN))
+    return new Text(this.consumeWhile(ch => ch !== CharCodes.LESS_THAN), start, this.pos)
   }
 
   /**
@@ -202,7 +215,7 @@ export default class WxmlParser extends Parser {
     return this.consumeWhile(c => isLetter(c) || isNumber(c) || c === CharCodes.COLON)
   }
 
-  parseAttributes() {
+  parseAttributes(): Map<string, AttributeValue> {
     const attrs = new Map()
     while (!this.eof()) {
       this.consumeWhitespace()
@@ -228,6 +241,7 @@ export default class WxmlParser extends Parser {
 
   parseAttrValue() {
     const leftQuote = this.consumeChar()
+    const start = this.pos
     if (leftQuote !== CharCodes.SINGLE_QUOTE && leftQuote !== CharCodes.DOUBLE_QUOTE) {
       throw new Error(
         `expected char ${String.fromCharCode(CharCodes.SINGLE_QUOTE)} or ${String.fromCharCode(CharCodes.DOUBLE_QUOTE)} ` +
@@ -235,9 +249,11 @@ export default class WxmlParser extends Parser {
       )
     }
     const value = this.consumeWhile(ch => ch !== leftQuote)
+    const end = this.pos
     if (this.consumeChar() !== leftQuote) {
       throw new Error('expected char ' + String.fromCharCode(leftQuote) + ' to close an attribute')
     }
-    return value
+    const attribute = new AttributeValue(value, start, end)
+    return attribute
   }
 }
