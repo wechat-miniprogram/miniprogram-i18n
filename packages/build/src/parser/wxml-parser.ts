@@ -40,6 +40,8 @@ export class Element extends Node implements Dumpable {
       for (const [key, value] of this.attributes) {
         if (value && value.value) {
           attributes[key] = value.value
+        } else {
+          attributes[key] = null
         }
       }
     }

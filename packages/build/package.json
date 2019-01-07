@@ -1,11 +1,12 @@
 {
-  "name": "cli",
+  "name": "build",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "author": "wechat-miniprogram",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.19.0"
+    "commander": "^2.19.0",
+    "format-message-parse": "^6.2.0"
   }
 }

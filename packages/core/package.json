@@ -1,5 +1,5 @@
 {
-  "name": "i18n",
+  "name": "core",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,5 +7,8 @@
     "build": "rollup -c rollup.config.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "message-format": "^6.2.0"
+  }
 }
