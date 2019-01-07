@@ -4,6 +4,7 @@
   "description": "The internationalizational (i18n) library for wechat miniprogram",
   "main": "index.js",
   "scripts": {
+    "test": "npm run test:compile && npm run test:gulp:wxml && npm run test:core",
     "test:compile": "jest --config=scripts/jest.compile.config.js --verbose",
     "test:core": "jest --config=scripts/jest.core.config.js --verbose",
     "test:gulp:wxml": "jest --config=scripts/jest.gulp.wxml.config.js --verbose",
