@@ -1,0 +1,21 @@
+{
+  "name": "gulp-i18n-wxml-transformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@miniprogram-i18n/compile": "^1.0.0",
+    "plugin-error": "^1.0.1",
+    "through2": "^3.0.0",
+    "vinyl": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/through2": "^2.0.34",
+    "@types/vinyl": "^2.0.2"
+  }
+}

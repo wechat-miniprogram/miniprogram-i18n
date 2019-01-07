@@ -1,4 +1,4 @@
-import TranslationBlockParser from '../../src/parser/expression-parser'
+import TranslationBlockParser from '../../parser/expression-parser'
 
 test('parse basic t func', () => {
   const source = `{{ t() }}`

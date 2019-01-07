@@ -1,5 +1,5 @@
-import { I18nError, formatErrors } from './utils/error'
-import { LocaleNames } from './types'
+import { I18nError, formatErrors } from '../compile/src/utils/error'
+import { LocaleNames } from '../compile/src/types'
 
 interface Config {
   defaultLocale: string

@@ -1,6 +1,6 @@
 import WxmlParser, { Text, Element, Node, AttributeValue } from '../parser/wxml-parser'
 import ExpressionParser from '../parser/expression-parser'
-import { Nullable } from '../types'
+import { Nullable } from '../../cli/types'
 
 export const enum TranslationFunction {
   default = 't',

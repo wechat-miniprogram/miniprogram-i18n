@@ -1,4 +1,4 @@
-import WxmlParser from '../../src/parser/wxml-parser'
+import WxmlParser from '../../parser/wxml-parser'
 
 const testCases = [
   {
@@ -258,8 +258,6 @@ const testCases = [
     expectThrows: true,
   },
 ]
-
-// TODO: Test Chinese / unicode
 
 testCases.forEach((testCase) => {
   test(`WXML parser: ${testCase.name}`, () => {

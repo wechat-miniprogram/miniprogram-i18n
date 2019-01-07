@@ -1,4 +1,4 @@
-import MessageFormat from 'message-format'
+import interpret from 'format-message-interpret'
 
 export interface MiniProgramI18nInterface {
   getString(key: string, params?: object): string
@@ -10,26 +10,20 @@ export const enum Locale {
   default = 'en-US',
 }
 
-export class I18nRuntime {
-
+export class I18nRuntimeBase {
   constructor(
     public translations: any = {},
     public currentLocale: string = Locale.default,
   ) {}
 
-  findTranslationMessage(key: string) {
+  findMessageAST(key: string) {
     return this.translations[this.currentLocale][key]
   }
 
   getString(key: string, options?: object) {
-    const message = this.findTranslationMessage(key)
-    if (options && typeof options === 'object') {
-      // TODO: add cache?
-      const messageInst = new MessageFormat(message, this.currentLocale)
-      const formatted = messageInst.format(options)
-      return formatted
-    }
-    return message
+    const ast = this.findMessageAST(key)
+    const formatted = interpret(ast, this.currentLocale)(options)
+    return formatted
   }
 
   setLocale(locale: string) {
@@ -39,5 +33,4 @@ export class I18nRuntime {
   loadTranslations(locales: object) {
     if (locales && typeof locales === 'object') this.translations = locales
   }
-
 }

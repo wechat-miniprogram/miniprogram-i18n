@@ -1,8 +1,6 @@
 import { CharCodes } from './types'
 import Parser from './parser'
-import { isWhitespace, isValidFunctionLiteralChar } from './utils'
-
-export const WXS_LITERAL = 'wxs'
+import { isValidFunctionLiteralChar } from './utils'
 
 class Expression {
   constructor(
@@ -13,18 +11,7 @@ class Expression {
 }
 
 /**
- * Notes:
- * 1. should ignore <wxs></wxs> tag, since it may contains double curly braces
- *    which is obviously not what we want.
- * 2. should ignore single {} and double {{}} when already in translation block.
- *    e.g. JavaScript nested blocks or object decls or double for loop and things like that.
- * 3. should identify function calls inside translation block ({{ t() }}) and sent it to transfomer afterwards.
- *    Note: should ignore object method decls e.g. {{ t.k() }}, function decls is not supported inside block.
- * 4. should parse function calls inside block
- */
-
-/**
- * BlockParser helps parsing expressions inside wxml interpolation block
+ * ExpressionParser helps parsing expressions inside wxml interpolation block
  */
 export default class ExpressionParser extends Parser {
   private blockStart: number = -1

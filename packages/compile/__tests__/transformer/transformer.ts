@@ -1,4 +1,4 @@
-import { I18nTranslationFunctionName, TranslationFunctionTransformer } from '../../src/transformer/translation-function-transformer'
+import { I18nTranslationFunctionName, TranslationFunctionTransformer } from '../../transformer/translation-function-transformer'
 
 const tt = I18nTranslationFunctionName.default
 

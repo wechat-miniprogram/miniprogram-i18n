@@ -1,7 +1,7 @@
-import { CharCodes } from './types'
+import { CharCodes, WXS_LITERAL } from './types'
 import Parser from './parser'
 import { isLetter, isNumber } from './utils'
-import { Nullable } from '../types'
+import { Nullable } from '../../cli/types'
 
 interface Dumpable {
   dump(): object
@@ -64,8 +64,6 @@ export class Text extends Node implements Dumpable {
     return { type: this.tagName, content: this.content }
   }
 }
-
-export const WXS_LITERAL = 'wxs'
 
 export const enum WxmlState {
   NORMAL = 0x01,

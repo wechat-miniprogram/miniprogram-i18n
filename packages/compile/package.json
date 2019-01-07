@@ -1,5 +1,5 @@
 {
-  "name": "build",
+  "name": "@miniprogram-i18n/compile",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

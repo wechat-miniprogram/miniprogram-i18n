@@ -9,6 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "message-format": "^6.2.0"
+    "format-message-interpret": "^6.2.0",
+    "message-format": "^6.2.0",
+    "shallowequal": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/shallowequal": "^1.1.0"
   }
 }

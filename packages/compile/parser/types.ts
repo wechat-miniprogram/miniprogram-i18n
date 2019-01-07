@@ -31,3 +31,5 @@ export const enum CharCodes {
   _9 = 0x39,
   $ = 0x24,
 }
+
+export const WXS_LITERAL = 'wxs'
