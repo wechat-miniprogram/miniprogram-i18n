@@ -238,6 +238,16 @@ const testCases = [
     expectThrows: true,
   },
   {
+    name: 'unfinished tag 4',
+    input: '<<',
+    expectThrows: true,
+  },
+  {
+    name: 'unfinished tag 5',
+    input: '<test<',
+    expectThrows: true,
+  },
+  {
     name: 'unfinished tag with normal tag afterwards',
     input: '<view<view></view>',
     expectThrows: true,
