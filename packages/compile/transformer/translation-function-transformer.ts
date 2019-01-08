@@ -6,8 +6,8 @@ export const enum TranslationFunction {
   default = 't',
 }
 
-export const enum I18nTranslationFunctionName {
-  default = '$_i18n.t',
+export const enum I18nModuleName {
+  default = 'i18n',
 }
 
 const BLOCK_DELIMITER_START = '{{'
@@ -22,7 +22,7 @@ export class TranslationFunctionTransformer {
 
   constructor(
     private translationFunctionName: string = TranslationFunction.default,
-    private i18nFunctionName: string = I18nTranslationFunctionName.default,
+    private i18nModuleName: string = I18nModuleName.default,
   ) { }
 
   /**
@@ -76,7 +76,7 @@ export class TranslationFunctionTransformer {
       if (callExpr.statement === this.translationFunctionName) {
         const head = source.substring(0, callExpr.start)
         const rear = source.substring(callExpr.end)
-        source = head + this.i18nFunctionName + rear
+        source = head + this.i18nModuleName + '.' + TranslationFunction.default + rear
         transformed = true
       }
     }

@@ -1,6 +1,6 @@
-import { I18nTranslationFunctionName, TranslationFunctionTransformer } from '../../transformer/translation-function-transformer'
+import { I18nModuleName, TranslationFunctionTransformer } from '../../transformer/translation-function-transformer'
 
-const tt = I18nTranslationFunctionName.default
+const tt = I18nModuleName.default + '.' + 't'
 
 const testCases = [
   {
