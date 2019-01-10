@@ -34,3 +34,13 @@ export class I18nRuntimeBase {
     if (locales && typeof locales === 'object') this.translations = locales
   }
 }
+
+interface PageObject {
+
+}
+
+export function I18n(pageObject: PageObject) {
+  // TODO: impl
+  const clonedPageObject = shallowCopy(pageObject)
+  return pageObject
+}

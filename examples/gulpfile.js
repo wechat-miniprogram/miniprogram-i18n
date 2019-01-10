@@ -8,7 +8,7 @@ function copyToDist() {
 
 function transpileWxml() {
   return src('src/**/*.wxml')
-    .pipe(gulpI18nWxml({ wxsPath: 'src/i18n' }))
+    .pipe(gulpI18nWxml({ wxsPath: 'src/i18n/locales.wxs' }))
     .pipe(dest('dist/'));
 }
 
