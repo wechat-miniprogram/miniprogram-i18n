@@ -1,5 +1,8 @@
-//app.js
+import { createI18n } from './bundle'
+
 App({
+  i18n: createI18n(),
+
   onLaunch: function () {
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
@@ -24,9 +27,6 @@ App({
 
               // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
               // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
             }
           })
         }

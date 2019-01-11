@@ -1,8 +1,8 @@
-//index.js
-//获取应用实例
+import I18n from '../../bundle'
+
 const app = getApp()
 
-Page({
+Page(I18n({
   data: {
     motto: 'Hello World',
     userInfo: {},
@@ -16,6 +16,10 @@ Page({
     })
   },
   onLoad: function () {
+    setTimeout(() => {
+      app.i18n.setLocale('zh-CN')
+      console.log('# locale chagned to zh-CN')
+    }, 5000)
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -51,4 +55,4 @@ Page({
       hasUserInfo: true
     })
   }
-})
+}))
