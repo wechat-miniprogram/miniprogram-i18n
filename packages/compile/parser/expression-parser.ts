@@ -6,7 +6,7 @@ class Expression {
   constructor(
     public start: number = 0,
     public end: number = 0,
-    public statement: string = '',
+    public expression: string = '',
   ) {}
 }
 

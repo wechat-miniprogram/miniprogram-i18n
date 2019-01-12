@@ -2,6 +2,35 @@ import I18n from '../../bundle'
 
 const app = getApp()
 
+Page(connect(mapStateToProps, mapDispatchToFunction)({
+  data: {
+
+  },
+
+  onLoad() {
+    this.data.test
+    this.upload()
+  },
+
+}))
+
+class IndexPage extends Page {
+  constructor() {
+    this.state = {}
+  }
+
+  upload() {
+  }
+
+  render() {
+    return (
+      <view></view>
+    )
+  }
+}
+
+Page(new IndexPage())
+
 Page(I18n({
   data: {
     motto: 'Hello World',

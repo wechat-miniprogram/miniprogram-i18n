@@ -50,7 +50,7 @@ const innerGlobals: Global = {
 }
 
 export function createI18n(translations: any, currentLocale: string) {
-  innerGlobals.i18nInstance = new I18nRuntimeBase(translations)
+  innerGlobals.i18nInstance = new I18nRuntimeBase(translations, currentLocale)
   return innerGlobals.i18nInstance
 }
 

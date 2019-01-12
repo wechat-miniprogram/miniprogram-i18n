@@ -73,7 +73,7 @@ export class TranslationFunctionTransformer {
     const expr = parser.parse()
     for (let i = expr.callExpressions.length - 1; i >= 0; i--) {
       const callExpr = expr.callExpressions[i]
-      if (callExpr.statement === this.translationFunctionName) {
+      if (callExpr.expression === this.translationFunctionName) {
         const head = source.substring(0, callExpr.start)
         const rear = source.substring(callExpr.end)
         source = head + this.i18nModuleName + '.' + TranslationFunction.default + rear
