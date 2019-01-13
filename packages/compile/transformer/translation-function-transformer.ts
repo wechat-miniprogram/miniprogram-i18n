@@ -1,5 +1,5 @@
 import WxmlParser, { Text, Element, Node, AttributeValue } from '../parser/wxml-parser'
-import ExpressionParser from '../parser/expression-parser'
+import ExpressionParser, { CallExpression } from '../parser/expression-parser'
 import { Nullable } from '../../cli/types'
 
 export const enum TranslationFunction {
@@ -8,6 +8,10 @@ export const enum TranslationFunction {
 
 export const enum I18nModuleName {
   default = 'i18n',
+}
+
+export const enum LocaleVariable {
+  default = '$_locale',
 }
 
 const BLOCK_DELIMITER_START = '{{'
@@ -23,6 +27,7 @@ export class TranslationFunctionTransformer {
   constructor(
     private translationFunctionName: string = TranslationFunction.default,
     private i18nModuleName: string = I18nModuleName.default,
+    private currentLocaleVariableName: string = LocaleVariable.default,
   ) { }
 
   /**
@@ -68,13 +73,25 @@ export class TranslationFunctionTransformer {
   }
 
   private transformFunctionCallExpr(source: string) {
-    let transformed = false
     const parser = new ExpressionParser(source)
     const expr = parser.parse()
-    for (let i = expr.callExpressions.length - 1; i >= 0; i--) {
-      const callExpr = expr.callExpressions[i]
+    return this.transformFunctionCallExprRecursively(source, expr.callExpressions)
+  }
+
+  private transformFunctionCallExprRecursively(source: string, callExpressions: CallExpression[]) {
+    let transformed = false
+    for (let i = callExpressions.length - 1; i >= 0; i--) {
+      const callExpr = callExpressions[i]
       if (callExpr.expression === this.translationFunctionName) {
-        console.log('@@@@@@@', callExpr)
+        // Inject currentLocale variable
+        const end = callExpr.end - 1
+        const localeVarDecl = callExpr.parameters.length > 0 ? `, ${this.currentLocaleVariableName}` : this.currentLocaleVariableName
+        source = source.substring(0, end) + localeVarDecl + source.substring(end)
+
+        const child = this.transformFunctionCallExprRecursively(source, callExpr.childFunctionExpressions)
+        transformed = transformed || child.transformed
+        source = child.content
+
         const head = source.substring(0, callExpr.functionNameStart)
         const rear = source.substring(callExpr.functionNameEnd)
         source = head + this.i18nModuleName + '.' + TranslationFunction.default + rear

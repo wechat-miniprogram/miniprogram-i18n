@@ -155,11 +155,8 @@ test('parse deeply nested t function', () => {
   const { expression, callExpressions } = parser.parse()
   expect(expression).toHaveLength(1)
   expect(expression[0].expression).toEqual(` t('key', { val: { n: t(k2), m: t('k3', { j: t('k4') }), n: 'v' }}) `)
-  expect(callExpressions).toHaveLength(4)
-  expect(callExpressions[0].start).toEqual(3)
-  expect(callExpressions[1].start).toEqual(24)
-  expect(callExpressions[2].start).toEqual(34)
-  expect(callExpressions[3].start).toEqual(47)
+  expect(callExpressions).toHaveLength(1)
+  expect(callExpressions[0].childFunctionExpressions).toHaveLength(2)
 })
 
 test('parse with t function in value field', () => {
@@ -168,7 +165,8 @@ test('parse with t function in value field', () => {
   const { expression, callExpressions: callExpression } = parser.parse()
   expect(expression).toHaveLength(1)
   expect(expression[0].expression).toEqual(` t('key', { v: t('key2') }) `)
-  expect(callExpression).toHaveLength(2)
+  expect(callExpression).toHaveLength(1)
+  expect(callExpression[0].childFunctionExpressions).toHaveLength(1)
 })
 
 test('bad case: parse with empty block', () => {

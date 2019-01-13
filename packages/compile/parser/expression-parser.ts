@@ -2,7 +2,7 @@ import { CharCodes } from './types'
 import Parser from './parser'
 import { isValidFunctionLiteralChar } from './utils'
 
-class Expression {
+export class Expression {
   constructor(
     public start: number = 0,
     public end: number = 0,
@@ -10,13 +10,15 @@ class Expression {
   ) {}
 }
 
-class CallExpression extends Expression {
+export class CallExpression extends Expression {
   constructor(
     start: number = 0,
     end: number = 0,
     expression: string = '',
     public functionNameStart: number = 0,
     public functionNameEnd: number = 0,
+    public parameters: string = '',
+    public childFunctionExpressions: CallExpression[] = [],
   ) {
     super(start, end, expression)
   }
@@ -72,7 +74,7 @@ export default class ExpressionParser extends Parser {
         const start = this.isFunctionCallExpression(this.pos)
         if (start !== -1) {
           const exprs = this.parseFunctionCallExpression(start)
-          this.callExpressions.push(...exprs)
+          this.callExpressions.push(exprs)
           continue
         }
       }
@@ -93,7 +95,7 @@ export default class ExpressionParser extends Parser {
         const start = this.isFunctionCallExpression(this.pos)
         if (start !== -1) {
           const expr = this.parseFunctionCallExpression(start)
-          callFunctions.push(...expr)
+          callFunctions.push(expr)
         }
       }
       if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
@@ -107,7 +109,7 @@ export default class ExpressionParser extends Parser {
   }
 
   parseFunctionCallExpression(start: number) {
-    const callFunctions: CallExpression[] = []
+    const childFunctions: CallExpression[] = []
     const functionNameEnd = this.pos
     if (this.consumeChar() !== CharCodes.LEFT_PAREN) {
       throw new Error('expected a left paren for a function call')
@@ -118,16 +120,22 @@ export default class ExpressionParser extends Parser {
         // JavaScript block should be ignored
         this.advance()
         const expr = this.parseObjectDecl()
-        callFunctions.push(...expr)
+        childFunctions.push(...expr)
       }
       if (this.consumeChar() === CharCodes.RIGHT_PAREN) {
         break
       }
     }
-    callFunctions.unshift(
-      new CallExpression(start, this.pos, this.source.substring(start, functionNameEnd), start, functionNameEnd),
+    console.log('@@@@@ test:', this.source.substring(start, this.pos))
+    return new CallExpression(
+      start,
+      this.pos,
+      this.source.substring(start, functionNameEnd),
+      start,
+      functionNameEnd,
+      this.source.substring(functionNameEnd + 1, this.pos - 1).trim(),
+      childFunctions,
     )
-    return callFunctions
   }
 
   enterInterpolationBlock() {
