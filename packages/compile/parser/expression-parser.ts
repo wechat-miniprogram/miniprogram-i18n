@@ -126,7 +126,6 @@ export default class ExpressionParser extends Parser {
         break
       }
     }
-    console.log('@@@@@ test:', this.source.substring(start, this.pos))
     return new CallExpression(
       start,
       this.pos,

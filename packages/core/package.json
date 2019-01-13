@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js",
+    "build:wxs": "rollup -c rollup.wxs.config.js"
   },
   "author": "",
   "license": "ISC",

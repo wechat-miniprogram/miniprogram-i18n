@@ -2,35 +2,6 @@ import I18n from '../../bundle'
 
 const app = getApp()
 
-Page(connect(mapStateToProps, mapDispatchToFunction)({
-  data: {
-
-  },
-
-  onLoad() {
-    this.data.test
-    this.upload()
-  },
-
-}))
-
-class IndexPage extends Page {
-  constructor() {
-    this.state = {}
-  }
-
-  upload() {
-  }
-
-  render() {
-    return (
-      <view></view>
-    )
-  }
-}
-
-Page(new IndexPage())
-
 Page(I18n({
   data: {
     motto: 'Hello World',
@@ -47,8 +18,10 @@ Page(I18n({
   onLoad: function () {
     setTimeout(() => {
       app.i18n.setLocale('zh-CN')
-      console.log('# locale chagned to zh-CN')
-    }, 5000)
+      setTimeout(() => {
+        app.i18n.setLocale('en-US')
+      }, 2000)
+    }, 2000)
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,

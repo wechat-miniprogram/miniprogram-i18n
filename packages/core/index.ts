@@ -1,5 +1,5 @@
-const interpret = require('format-message-interpret')
 import Notification from './notification'
+import { interpret } from './interpreter'
 
 export interface MiniProgramI18nInterface {
   getString(key: string, params?: object): string
@@ -95,7 +95,7 @@ export default function I18n(pageObject: PageObject) {
      * Setting up event listeners to trigger page rerender when locale changed
      */
     onLoad(...args) {
-      if (typeof pageObject.onLoad === 'function') pageObject.onLoad(...args)
+      if (typeof pageObject.onLoad === 'function') pageObject.onLoad.apply(this, args)
       notification.subscribe(LOCALE_CHANGE_NOTIFICATION_NAME, this[LOCALE_CHANGE_HANDLER_NAME])
     },
 
@@ -103,7 +103,7 @@ export default function I18n(pageObject: PageObject) {
      * Tear down event listeners
      */
     onUnload(...args) {
-      if (typeof pageObject.onUnload === 'function') pageObject.onUnload(...args)
+      if (typeof pageObject.onUnload === 'function') pageObject.onUnload.apply(this, args)
       notification.unsubscribe(LOCALE_CHANGE_NOTIFICATION_NAME, this[LOCALE_CHANGE_HANDLER_NAME]!)
     },
   }

@@ -1,4 +1,4 @@
-import Notification from '../src/notification'
+import Notification from '../notification'
 
 test('Notification', () => {
   const notification = new Notification()

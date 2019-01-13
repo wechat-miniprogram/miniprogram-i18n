@@ -1,0 +1,5 @@
+{
+  "test": "test messages",
+  "test2": "test message 2, {label}, {label2}",
+  "nested": "nested message: {test}"
+}

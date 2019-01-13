@@ -1,4 +1,4 @@
-import { I18nRuntimeBase } from '../src'
+import { I18nRuntimeBase } from '..'
 
 test('I18nRuntime: basic interpolation test', () => {
   const localeData = {

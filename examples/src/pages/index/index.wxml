@@ -1,14 +1,6 @@
-<!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> {{ t('getNickname') }} </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
-  </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
-  </view>
   <text>Current locale: {{ $_locale }}</text>
+  <text>{{ t('test') }}</text>
+  <text>{{ t('test2', { label: 'sample', label2: 'sample2' }) }}</text>
+  <text>{{ t('nested', { test: t('test') }) }}</text>
 </view>

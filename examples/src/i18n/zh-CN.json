@@ -1,0 +1,5 @@
+{
+  "test": "测试消息",
+  "test2": "测试消息二, {label}, {label2}",
+  "nested": "嵌套消息: {test}"
+}
