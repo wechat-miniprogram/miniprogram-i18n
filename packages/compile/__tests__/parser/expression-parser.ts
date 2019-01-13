@@ -12,10 +12,10 @@ test('parse basic t func', () => {
 test('parse basic t func with other expressions', () => {
   const source = `abc + {{ t() }} + def`
   const parser = new TranslationBlockParser(source)
-  const { expression, callExpressions: callExpression } = parser.parse()
+  const { expression, callExpressions } = parser.parse()
   expect(expression).toHaveLength(1)
   expect(expression[0].expression).toEqual(' t() ')
-  expect(callExpression).toHaveLength(1)
+  expect(callExpressions).toHaveLength(1)
 })
 
 test('parse basic t func with multiple expressions inside', () => {

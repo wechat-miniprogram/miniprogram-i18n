@@ -10,13 +10,25 @@ class Expression {
   ) {}
 }
 
+class CallExpression extends Expression {
+  constructor(
+    start: number = 0,
+    end: number = 0,
+    expression: string = '',
+    public functionNameStart: number = 0,
+    public functionNameEnd: number = 0,
+  ) {
+    super(start, end, expression)
+  }
+}
+
 /**
  * ExpressionParser helps parsing expressions inside wxml interpolation block
  */
 export default class ExpressionParser extends Parser {
   private blockStart: number = -1
   private expressions: Expression[] = []
-  private callExpressions: Expression[] = []
+  private callExpressions: CallExpression[] = []
 
   constructor(
     public source: string,
@@ -59,40 +71,61 @@ export default class ExpressionParser extends Parser {
       if (this.match(CharCodes.LEFT_PAREN)) {
         const start = this.isFunctionCallExpression(this.pos)
         if (start !== -1) {
-          this.callExpressions.push(new Expression(start, this.pos, this.source.substring(start, this.pos)))
+          const exprs = this.parseFunctionCallExpression(start)
+          this.callExpressions.push(...exprs)
+          continue
         }
-      }
-
-      if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
-        // JavaScript block should be ignored
-        this.advance()
-        this.parseJavaScriptBlock()
       }
       this.advance()
     }
   }
 
-  parseJavaScriptBlock() {
+  parseObjectDecl() {
+    const callFunctions: CallExpression[] = []
     while (!this.eof()) {
       this.consumeQuoteString()
 
       if (this.match(CharCodes.RIGHT_CURLY_BRACE)) {
         this.advance()
-        return
+        return callFunctions
       }
       if (this.match(CharCodes.LEFT_PAREN)) {
         const start = this.isFunctionCallExpression(this.pos)
         if (start !== -1) {
-          this.callExpressions.push(new Expression(start, this.pos, this.source.substring(start, this.pos)))
+          callFunctions.push(...this.parseFunctionCallExpression(start))
         }
       }
       if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
         this.advance()
-        this.parseJavaScriptBlock()
+        this.parseObjectDecl()
         continue
       }
       this.advance()
     }
+    return callFunctions
+  }
+
+  parseFunctionCallExpression(start: number) {
+    const callFunctions: CallExpression[] = []
+    const functionNameEnd = this.pos
+    if (this.consumeChar() !== CharCodes.LEFT_PAREN) {
+      throw new Error('expected a left paren for a function call')
+    }
+    while (!this.eof()) {
+      this.consumeQuoteString()
+      if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
+        // JavaScript block should be ignored
+        this.advance()
+        callFunctions.push(...this.parseObjectDecl())
+      }
+      if (this.consumeChar() === CharCodes.RIGHT_PAREN) {
+        break
+      }
+    }
+    callFunctions.unshift(
+      new CallExpression(start, this.pos, this.source.substring(start, functionNameEnd), start, functionNameEnd),
+    )
+    return callFunctions
   }
 
   enterInterpolationBlock() {

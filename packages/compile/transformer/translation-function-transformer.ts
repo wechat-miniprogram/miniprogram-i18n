@@ -43,7 +43,7 @@ export class TranslationFunctionTransformer {
       const node = nodes[i]
       if (node instanceof Text) {
         if (node.content.includes(BLOCK_DELIMITER_START)) {
-          const { content, transformed } = this.transformFunctionCallExprInPlace(node.content)
+          const { content, transformed } = this.transformFunctionCallExpr(node.content)
           if (transformed) {
             const head = this.source.substring(0, node.start)
             const rear = this.source.substring(node.end)
@@ -55,7 +55,7 @@ export class TranslationFunctionTransformer {
         const attributes = this.sortAttributesByStartPos(node.attributes)
         for (const attrValue of attributes) {
           if (attrValue && attrValue.value.includes(BLOCK_DELIMITER_START)) {
-            const { content, transformed } = this.transformFunctionCallExprInPlace(attrValue.value)
+            const { content, transformed } = this.transformFunctionCallExpr(attrValue.value)
             if (transformed) {
               const head = this.source.substring(0, attrValue.start)
               const rear = this.source.substring(attrValue.end)
@@ -67,15 +67,16 @@ export class TranslationFunctionTransformer {
     }
   }
 
-  private transformFunctionCallExprInPlace(source: string) {
+  private transformFunctionCallExpr(source: string) {
     let transformed = false
     const parser = new ExpressionParser(source)
     const expr = parser.parse()
     for (let i = expr.callExpressions.length - 1; i >= 0; i--) {
       const callExpr = expr.callExpressions[i]
       if (callExpr.expression === this.translationFunctionName) {
-        const head = source.substring(0, callExpr.start)
-        const rear = source.substring(callExpr.end)
+        console.log('@@@@@@@', callExpr)
+        const head = source.substring(0, callExpr.functionNameStart)
+        const rear = source.substring(callExpr.functionNameEnd)
         source = head + this.i18nModuleName + '.' + TranslationFunction.default + rear
         transformed = true
       }
