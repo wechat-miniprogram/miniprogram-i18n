@@ -1,6 +1,7 @@
 import I18n from '../../bundle'
 
 const app = getApp()
+const i18n = app.i18n
 
 Page(I18n({
   data: {
@@ -16,10 +17,13 @@ Page(I18n({
     })
   },
   onLoad: function () {
+    console.log('current locale:', i18n.currentLocale, i18n.getString('test'))
     setTimeout(() => {
       app.i18n.setLocale('zh-CN')
+      console.log('current locale:', i18n.currentLocale, i18n.getString('test'))
       setTimeout(() => {
         app.i18n.setLocale('en-US')
+        console.log('current locale:', i18n.currentLocale, i18n.getString('nested', { test: 'test' }))
       }, 2000)
     }, 2000)
     if (app.globalData.userInfo) {
