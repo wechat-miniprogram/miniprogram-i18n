@@ -148,6 +148,20 @@ test('parse with nested object inside value', () => {
   expect(callExpression).toHaveLength(2)
 })
 
+test('parse deeply nested t function', () => {
+  // nested object may also contains double close braces
+  const source = `{{ t('key', { val: { n: t(k2), m: t('k3', { j: t('k4') }), n: 'v' }}) }}`
+  const parser = new TranslationBlockParser(source)
+  const { expression, callExpressions } = parser.parse()
+  expect(expression).toHaveLength(1)
+  expect(expression[0].expression).toEqual(` t('key', { val: { n: t(k2), m: t('k3', { j: t('k4') }), n: 'v' }}) `)
+  expect(callExpressions).toHaveLength(4)
+  expect(callExpressions[0].start).toEqual(3)
+  expect(callExpressions[1].start).toEqual(24)
+  expect(callExpressions[2].start).toEqual(34)
+  expect(callExpressions[3].start).toEqual(47)
+})
+
 test('parse with t function in value field', () => {
   const source = `{{ t('key', { v: t('key2') }) }}`
   const parser = new TranslationBlockParser(source)

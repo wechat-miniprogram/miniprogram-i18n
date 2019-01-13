@@ -92,12 +92,13 @@ export default class ExpressionParser extends Parser {
       if (this.match(CharCodes.LEFT_PAREN)) {
         const start = this.isFunctionCallExpression(this.pos)
         if (start !== -1) {
-          callFunctions.push(...this.parseFunctionCallExpression(start))
+          const expr = this.parseFunctionCallExpression(start)
+          callFunctions.push(...expr)
         }
       }
       if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
         this.advance()
-        this.parseObjectDecl()
+        callFunctions.push(...this.parseObjectDecl())
         continue
       }
       this.advance()
@@ -116,7 +117,8 @@ export default class ExpressionParser extends Parser {
       if (this.match(CharCodes.LEFT_CURLY_BRACE)) {
         // JavaScript block should be ignored
         this.advance()
-        callFunctions.push(...this.parseObjectDecl())
+        const expr = this.parseObjectDecl()
+        callFunctions.push(...expr)
       }
       if (this.consumeChar() === CharCodes.RIGHT_PAREN) {
         break
