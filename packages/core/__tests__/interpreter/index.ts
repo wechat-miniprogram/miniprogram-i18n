@@ -1,4 +1,4 @@
-import { interpret } from '../../src/intepreter'
+import { interpret } from '../../interpreter'
 
 test('Interpreter: plain text message', () => {
   const formatted = interpret(['plain text message'])
@@ -22,7 +22,7 @@ test('Interpreter: multiple interpolotion', () => {
 
 test('Interpreter: interpolotion without params', () => {
   const formatted = interpret(['start ', ['param1'], ' end'])
-  expect(formatted).toEqual('start  end')
+  expect(formatted).toEqual('start {param1} end')
 })
 
 test('Interpreter: interpolotion with deeply object', () => {
@@ -32,5 +32,5 @@ test('Interpreter: interpolotion with deeply object', () => {
 
 test('Interpreter: interpolotion with deeply object but empty object', () => {
   const formatted = interpret(['start ', ['a.b.c'], ' end'], { a: {}})
-  expect(formatted).toEqual('start  end')
+  expect(formatted).toEqual('start {a.b.c} end')
 })

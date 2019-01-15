@@ -1,5 +1,5 @@
 /**
- * Common logic between js and wxs
+ * Common runtime logic between js and wxs
  */
 
 export function lookUpAST(key: string, translations: any, locale: string, fallbackLocale: string) {
@@ -9,6 +9,11 @@ export function lookUpAST(key: string, translations: any, locale: string, fallba
     if (!fallbackTranslation) {
       return key
     }
-    return fallbackTranslation[key]
+    const translation = fallbackTranslation[key]
+    if (!translation) return key
+    return translation
   }
+  const translation = translationsForLocale[key]
+  if (!translation) return key
+  return translation
 }

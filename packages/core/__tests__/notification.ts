@@ -8,10 +8,10 @@ test('Notification', () => {
     value = val
   }
   notification.subscribe('localeChange', handler)
-  notification.public('localeChange', newLocale)
+  notification.publish('localeChange', newLocale)
   expect(value).toEqual(newLocale)
 
   notification.unsubscribe('localeChange', handler)
-  notification.public('localeChange', 'en-US')
+  notification.publish('localeChange', 'en-US')
   expect(value).toEqual(newLocale)
 })
