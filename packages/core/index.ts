@@ -1,5 +1,6 @@
 import Notification from './notification'
 import { interpret } from './interpreter'
+import { lookUpAST } from './common'
 
 export interface MiniProgramI18nInterface {
   getString(key: string, params?: object): string
@@ -19,11 +20,11 @@ export class I18nRuntimeBase {
   constructor(
     public translations: any = {},
     public currentLocale: string = Locale.default,
+    public fallbackLocale: string = Locale.default,
   ) {}
 
   lookUpAST(key: string) {
-    // add fallback lang
-    return this.translations[this.currentLocale][key]
+    return lookUpAST(key, this.translations, this.currentLocale, this.fallbackLocale)
   }
 
   getString(key: string, options?: object) {

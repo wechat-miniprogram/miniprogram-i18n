@@ -1,13 +1,11 @@
 import { interpret } from '../interpreter'
+import { lookUpAST } from '../common'
 
 export function getMessageInterpreter(translations: any) {
-  function lookUpAST(key: string, currentLocale: string) {
-    // TODO: impl fallback lang
-    return translations[currentLocale][key]
-  }
 
   function evaluate(key: string, params: any, locale: string) {
-    const message = lookUpAST(key, locale)
+    // FIXME: add fallback locale
+    const message = lookUpAST(key, translations, locale, 'en-US')
     return interpret(message, params)
   }
 
