@@ -22,22 +22,32 @@ export class I18nRuntimeBase {
   ) {}
 
   lookUpAST(key: string) {
+    // add fallback lang
     return this.translations[this.currentLocale][key]
   }
 
   getString(key: string, options?: object) {
     const ast = this.lookUpAST(key)
-    const formatted = interpret(ast, this.currentLocale)(options)
+    const formatted = interpret(ast, options)
     return formatted
   }
 
   setLocale(locale: string) {
     this.currentLocale = locale
-    notification.public(LOCALE_CHANGE_NOTIFICATION_NAME, this.currentLocale)
+    notification.publish(LOCALE_CHANGE_NOTIFICATION_NAME, this.currentLocale)
+  }
+
+  getLocale() {
+    return this.currentLocale
   }
 
   loadTranslations(locales: object) {
     if (locales && typeof locales === 'object') this.translations = locales
+  }
+
+  // method shortcut
+  t(key: string, options?: object) {
+    return this.getString(key, options)
   }
 }
 
@@ -62,9 +72,13 @@ interface PageObject {
   [LOCALE_CHANGE_HANDLER_NAME]: (locale: string) => void,
   onLoad: () => void,
   onUnload: () => void,
+  t: (key: string, params: object) => string,
 }
 
-export default function I18n(pageObject: PageObject) {
+/**
+ * Should provide page wrapper, prefer I18n behaviors using Component ctor
+ */
+export function I18n(pageObject: PageObject) {
   pageObject = pageObject || {}
 
   if (!innerGlobals.i18nInstance) {
@@ -106,7 +120,84 @@ export default function I18n(pageObject: PageObject) {
       if (typeof pageObject.onUnload === 'function') pageObject.onUnload.apply(this, args)
       notification.unsubscribe(LOCALE_CHANGE_NOTIFICATION_NAME, this[LOCALE_CHANGE_HANDLER_NAME]!)
     },
+
+    t(key: string, params: object) {
+      if (!innerGlobals.i18nInstance) {
+        throw new Error('[i18n] ensure run createI18n() in app.js before using I18n library')
+      }
+      return innerGlobals.i18nInstance.getString(key, params)
+    },
   }
 
   return Object.assign({}, pageObject, hooks)
+}
+
+/** Behavior ctor provided by miniprogram runtime globally */
+declare var Behavior: (obj: object) => void
+
+interface I18nBehaviorOptions {
+  injectTranslationMethod?: boolean
+  injectLocaleMethod?: boolean
+}
+
+export default (options: I18nBehaviorOptions = {}) => {
+  options.injectTranslationMethod = typeof options.injectTranslationMethod !== 'undefined' ? options.injectTranslationMethod : true
+  options.injectLocaleMethod = typeof options.injectLocaleMethod !== 'undefined' ? options.injectLocaleMethod : true
+
+  const behaviorHooks = {
+    data: {
+      [CURRENT_LOCALE_KEY]: innerGlobals.i18nInstance && innerGlobals.i18nInstance.currentLocale,
+    },
+
+    lifetimes: {
+      created() {
+        (this as any)[LOCALE_CHANGE_HANDLER_NAME] = (currentLocale: string) => {
+          (this as any).setData({
+            [CURRENT_LOCALE_KEY]: currentLocale,
+          })
+        }
+      },
+
+      attached() {
+        if (!innerGlobals.i18nInstance) {
+          throw new Error('[i18n] ensure run createI18n() in app.js before using I18n library')
+        }
+
+        notification.subscribe(LOCALE_CHANGE_NOTIFICATION_NAME, (this as any)[LOCALE_CHANGE_HANDLER_NAME])
+      },
+
+      detached() {
+        notification.unsubscribe(LOCALE_CHANGE_NOTIFICATION_NAME, (this as any)[LOCALE_CHANGE_HANDLER_NAME]!)
+      },
+    },
+
+    methods: {},
+  }
+
+  if (options.injectTranslationMethod) {
+    (behaviorHooks.methods as any).t = (key: string, params: object) => {
+      if (!innerGlobals.i18nInstance) {
+        throw new Error('[i18n] ensure run createI18n() in app.js before using I18n library')
+      }
+      return innerGlobals.i18nInstance.getString(key, params)
+    }
+  }
+
+  if (options.injectLocaleMethod) {
+    (behaviorHooks.methods as any).setLocale = (locale: string) => {
+      if (!innerGlobals.i18nInstance) {
+        throw new Error('[i18n] ensure run createI18n() in app.js before using I18n library')
+      }
+      return innerGlobals.i18nInstance.setLocale(locale)
+    }
+
+    (behaviorHooks.methods as any).getLocale = () => {
+      if (!innerGlobals.i18nInstance) {
+        throw new Error('[i18n] ensure run createI18n() in app.js before using I18n library')
+      }
+      return innerGlobals.i18nInstance.getLocale()
+    }
+  }
+
+  return Behavior(behaviorHooks)
 }

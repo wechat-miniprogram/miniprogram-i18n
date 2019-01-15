@@ -28,7 +28,7 @@ function getParams(tokens: Array<any>, params: any, i: number = 0): string {
   if (!params || !tokens || tokens.length <= 0) return ''
   const current = params[tokens[i]]
   if (!current) {
-    return EMPTY
+    return `{ ${tokens.join('.')} }`
   }
   if (typeof current === 'string') {
     return current

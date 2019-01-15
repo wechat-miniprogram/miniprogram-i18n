@@ -7,7 +7,7 @@ interface Subscribers {
 export default class Notification {
   private subscribers: Subscribers = {}
 
-  public(name: string, value: any) {
+  publish(name: string, value: any) {
     const subs = this.subscribers[name]
     if (!subs) return
     for (const sub of subs.slice()) {

@@ -2,6 +2,7 @@ import { interpret } from '../interpreter'
 
 export function getMessageInterpreter(translations: any) {
   function lookUpAST(key: string, currentLocale: string) {
+    // TODO: impl fallback lang
     return translations[currentLocale][key]
   }
 
