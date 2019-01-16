@@ -246,10 +246,10 @@ export const I18n = Behavior((() => {
   }
 
   (behaviorHooks.methods as any).onLocaleChange = (handler: Handler) => {
-  if (!innerGlobals.i18nInstance) {
-    throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
-  }
-  return innerGlobals.i18nInstance.onLocaleChange(handler)
+    if (!innerGlobals.i18nInstance) {
+      throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
+    }
+    return innerGlobals.i18nInstance.onLocaleChange(handler)
   }
 
   return behaviorHooks
