@@ -1,0 +1,5 @@
+<!--logs.wxml-->
+<view class="container log-list">
+  Locale: {{ $_locale }}
+  {{ t('test') }}
+</view>
