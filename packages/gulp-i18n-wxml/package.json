@@ -1,5 +1,5 @@
 {
-  "name": "@miniprogram-i18n/gulp-i18n-wxml-transformer",
+  "name": "@miniprogram-i18n/gulp-wxml-transformer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

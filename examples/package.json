@@ -9,7 +9,7 @@
     "build": "gulp"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "format-message-parse": "^6.2.0",
     "gulp": "^4.0.0",

@@ -1,4 +1,4 @@
-import parse = require('format-message-parse')
+const parse = require('format-message-parse')
 
 /**
  * Use parser from format-message-parse

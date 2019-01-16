@@ -4,7 +4,9 @@ import through from 'through2'
 import File from 'vinyl'
 import PluginError from 'plugin-error'
 
-const PLUGIN_NAME = '@miniprogram-i18n/gulp-i18n-wxml-transformer'
+const PLUGIN_NAME = '@miniprogram-i18n/gulp-wxml-transformer'
+
+const DEFAULT_WXS_PATH = 'src/i18n/locales.wxs'
 
 interface Options {
   wxsPath: string,
@@ -16,7 +18,7 @@ const getWxsTag = (path: string, moduleName: string) => `<wxs src="${path}" modu
 
 const gulpI18nWxmlTransformer = (options?: Options) => through.obj((file: File, _, cb) => {
   const opts = options || { wxsPath: '', wxsModuleName: '', i18nFunctionName: ''}
-  const wxsPath = opts.wxsPath
+  const wxsPath = opts.wxsPath || DEFAULT_WXS_PATH
   if (!wxsPath) {
     return cb(new PluginError(PLUGIN_NAME, 'wxsPath is required'))
   }
