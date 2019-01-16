@@ -6,6 +6,7 @@ import PluginError from 'plugin-error'
 
 const PLUGIN_NAME = '@miniprogram-i18n/gulp-wxml-transformer'
 
+// Assume source folder is src
 const DEFAULT_WXS_PATH = 'src/i18n/locales.wxs'
 
 interface Options {

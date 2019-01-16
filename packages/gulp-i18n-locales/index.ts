@@ -8,7 +8,10 @@ import { parseTranslation } from '@miniprogram-i18n/compile'
 const PLUGIN_NAME = '@miniprogram-i18n/gulp-locales-loader'
 
 const DEFAULT_WXS_FILENAME = 'locales.wxs'
-const DEFAULT_JS_FILENAME =  'locales.js'
+const DEFAULT_JS_FILENAME = 'locales.js'
+
+const DEFAULT_LOCALE = 'en-US'
+const DEFAULT_FALLBACK_LOCALE = 'en-US'
 
 const CORE_PATH = path.dirname(require.resolve('@miniprogram-i18n/core/package.json'))
 
@@ -22,6 +25,8 @@ function getWxsCode() {
 interface Options {
   wxsFileName?: string
   jsFileName?: string
+  defaultLocale?: string
+  fallbackLocale?: string
 }
 
 let firstFile: File
@@ -44,6 +49,7 @@ function parseTranslations(object: any) {
 }
 
 const gulpI18nLocalesLoader = (options?: Options) => {
+  if (!options) options = {}
 
   function buffer(file: File, _: any, cb: Callback) {
     // Ignore empty file or not json files
@@ -82,10 +88,12 @@ const gulpI18nLocalesLoader = (options?: Options) => {
     const jsFileName = options && options.jsFileName || DEFAULT_JS_FILENAME
 
     const localeString = JSON.stringify(localeFile)
-    const wxsContent = `var fallbackLocale='en-US';var translations=${localeString};\n${getWxsCode()}`
+    const defaultLocale = options && options.defaultLocale || DEFAULT_LOCALE
+    const fallbackLocale = options && options.fallbackLocale || DEFAULT_FALLBACK_LOCALE
+    const wxsContent = `var fallbackLocale=${fallbackLocale};var translations=${localeString};\n${getWxsCode()}`
 
     // FIXME: fix fallback locale
-    const jsContent = `module.exports.fallbackLocale='en-US';module.exports.defaultLocale='en-US';module.exports.translations=${localeString};`
+    const jsContent = `module.exports.fallbackLocale='${fallbackLocale}';module.exports.defaultLocale='${defaultLocale}';module.exports.translations=${localeString};`
 
     const wxsFile = new File({
       cwd: firstFile.cwd,

@@ -10,7 +10,7 @@ function mergeAndGenerateLocales() {
 
 function transpileWxml() {
   return src('src/**/*.wxml')
-    .pipe(gulpI18nWxml({ wxsPath: 'src/i18n/locales.wxs' }))
+    .pipe(gulpI18nWxml())
     .pipe(dest('dist/'))
 }
 
