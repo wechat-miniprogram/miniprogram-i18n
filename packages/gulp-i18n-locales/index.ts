@@ -18,7 +18,7 @@ const CORE_PATH = path.dirname(require.resolve('@miniprogram-i18n/core/package.j
 function getWxsCode() {
   const code = fs.readFileSync(path.join(CORE_PATH, '/dist/wxs.js'), 'utf-8')
   // FIXME: function name maybe mangled
-  const runner = `module.exports.t = Interpreter.getMessageInterpreter(translations)`
+  const runner = `module.exports.t = Interpreter.getMessageInterpreter(translations, fallbackLocale)`
   return [code, runner].join('\n')
 }
 
@@ -90,9 +90,8 @@ const gulpI18nLocalesLoader = (options?: Options) => {
     const localeString = JSON.stringify(localeFile)
     const defaultLocale = options && options.defaultLocale || DEFAULT_LOCALE
     const fallbackLocale = options && options.fallbackLocale || DEFAULT_FALLBACK_LOCALE
-    const wxsContent = `var fallbackLocale=${fallbackLocale};var translations=${localeString};\n${getWxsCode()}`
+    const wxsContent = `var fallbackLocale='${fallbackLocale}';var translations=${localeString};\n${getWxsCode()}`
 
-    // FIXME: fix fallback locale
     const jsContent = `module.exports.fallbackLocale='${fallbackLocale}';module.exports.defaultLocale='${defaultLocale}';module.exports.translations=${localeString};`
 
     const wxsFile = new File({

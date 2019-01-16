@@ -4,7 +4,7 @@ const gulpI18nLocales = require('../packages/gulp-i18n-locales/dist/bundle')
 
 function mergeAndGenerateLocales() {
   return src('src/**/i18n/*.json')
-    .pipe(gulpI18nLocales())
+    .pipe(gulpI18nLocales({ defaultLocale: 'zh-CN', fallbackLocale: 'zh-CN' }))
     .pipe(dest('dist/i18n/'))
 }
 

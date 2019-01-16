@@ -80,7 +80,6 @@ const innerGlobals: Global = {
 
 // Find locales by default from /i18n/locales.js
 const DEFAULT_LOCALE_PATH = '/i18n/locales.js'
-const translations = null
 try {
   // tslint:disable-next-line
   const locales = require(DEFAULT_LOCALE_PATH)

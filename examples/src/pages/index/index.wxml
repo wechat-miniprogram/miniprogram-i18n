@@ -3,6 +3,7 @@
   <text>{{ t('test') }}</text>
   <text>{{ t('test2', { label: 'sample', label2: 'sample2' }) }}</text>
   <text>{{ t('nested', { test: t('test') }) }}</text>
+  <text>{{ t('index.test') }}</text>
 </view>
 <button bindtap="toggleLocale">{{ t('toggle') }}</button>
 <button bindtap="nativate">{{ t('navigate') }}</button>

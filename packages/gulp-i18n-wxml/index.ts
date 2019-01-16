@@ -20,9 +20,6 @@ const getWxsTag = (path: string, moduleName: string) => `<wxs src="${path}" modu
 const gulpI18nWxmlTransformer = (options?: Options) => through.obj((file: File, _, cb) => {
   const opts = options || { wxsPath: '', wxsModuleName: '', i18nFunctionName: ''}
   const wxsPath = opts.wxsPath || DEFAULT_WXS_PATH
-  if (!wxsPath) {
-    return cb(new PluginError(PLUGIN_NAME, 'wxsPath is required'))
-  }
   const wxsModuleName = opts.wxsModuleName || I18nModuleName.default
   const i18nFunctionName = opts.i18nFunctionName || TranslationFunction.default
 
