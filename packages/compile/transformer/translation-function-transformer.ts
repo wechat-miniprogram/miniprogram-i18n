@@ -1,6 +1,5 @@
 import WxmlParser, { Text, Element, Node, AttributeValue } from '../parser/wxml-parser'
 import ExpressionParser, { CallExpression } from '../parser/expression-parser'
-import { Nullable } from '../../cli/types'
 
 export const enum TranslationFunction {
   default = 't',
@@ -101,7 +100,7 @@ export class TranslationFunctionTransformer {
     return { transformed, content: source }
   }
 
-  private sortAttributesByStartPos(attributes: Map<string, Nullable<AttributeValue>>) {
+  private sortAttributesByStartPos(attributes: Map<string, AttributeValue | null>) {
     // descendent
     return Array.from(attributes.values()).filter(a => !!a).sort((a, b) => b!.start - a!.start)
   }

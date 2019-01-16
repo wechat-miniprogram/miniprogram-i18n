@@ -1,0 +1,19 @@
+{
+  "name": "@miniprogram-i18n/cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "cli": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c rollup.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@miniprogram-i18n/core": "^1.0.0",
+    "gulp": "^4.0.0"
+  }
+}

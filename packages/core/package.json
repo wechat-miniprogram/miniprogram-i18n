@@ -1,5 +1,5 @@
 {
-  "name": "core",
+  "name": "@miniprogram-i18n/core",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "build:wxs": "rollup -c rollup.wxs.config.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "format-message-interpret": "^6.2.0",
     "message-format": "^6.2.0",

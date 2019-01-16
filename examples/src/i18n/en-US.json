@@ -1,5 +1,8 @@
 {
   "test": "test messages",
   "test2": "test message 2, {label}, {label2}",
-  "nested": "nested message: {test}"
+  "nested": "nested message: {test}",
+  "toggle": "Toggle locale",
+  "navigate": "Navigate to Log",
+  "window.title": "I18n test"
 }

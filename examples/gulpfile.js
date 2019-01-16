@@ -26,12 +26,7 @@ function parseJSONField(object) {
   return object
 }
 
-function copyToDist() {
-  return src(['src/**/*', '!src/**/*.wxml'])
-    .pipe(dest('dist/'))
-}
-
-function mergeI18nJsonFiles() {
+function mergeI18nJsonFilesToWxs() {
   return src(['src/**/i18n/*.json'])
     .pipe(mergeJSON({
       fileName: 'locales.wxs',
@@ -47,10 +42,30 @@ function mergeI18nJsonFiles() {
     .pipe(dest('dist/i18n'))
 }
 
+function mergeI18nJsonFilesToJS() {
+  return src(['src/**/i18n/*.json'])
+    .pipe(mergeJSON({
+      fileName: 'locales.js',
+      edit: (obj, file) => {
+        const p = file.path
+        const basename = path.basename(p)
+        const fileName = basename.split('.')[0]
+        return { [fileName]: parseJSONField(obj) }
+      },
+      exportModule: 'module.exports'
+    }))
+    .pipe(dest('dist/i18n'))
+}
+
 function transpileWxml() {
   return src('src/**/*.wxml')
     .pipe(gulpI18nWxml({ wxsPath: 'src/i18n/locales.wxs' }))
     .pipe(dest('dist/'));
 }
 
-exports.default = series(copyToDist, transpileWxml, mergeI18nJsonFiles);
+function copyToDist() {
+  return src(['src/**/*', '!src/**/*.wxml', '!src/**/i18n/*.json'])
+    .pipe(dest('dist/'))
+}
+
+exports.default = series(copyToDist, transpileWxml, mergeI18nJsonFilesToWxs, mergeI18nJsonFilesToJS);

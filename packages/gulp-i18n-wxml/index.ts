@@ -4,7 +4,7 @@ import through from 'through2'
 import File from 'vinyl'
 import PluginError from 'plugin-error'
 
-const PLUGIN_NAME = 'gulp-i18n-wxml-transformer'
+const PLUGIN_NAME = '@miniprogram-i18n/gulp-i18n-wxml-transformer'
 
 interface Options {
   wxsPath: string,

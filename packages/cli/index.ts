@@ -1,31 +1,23 @@
-import { I18nError, formatErrors } from '../compile/src/utils/error'
-import { LocaleNames } from '../compile/src/types'
+import fs from 'fs'
+import * as path from 'path'
+import gulp from 'gulp'
 
-interface Config {
-  defaultLocale: string
-  locales: LocaleNames
-  fallbackLocale: string
-  localeFolder: string
-}
+// import program from 'commander'
 
-export function validateI18nConfig(config: Config): Array<Error> {
-  const errors = []
-  // Verify format of config file
-  if (!config.defaultLocale) errors.push(I18nError('defaultLocale should be specify in app.json'))
-  if (!config.locales || !Array.isArray(config.locales) || config.locales.length === 0) {
-    errors.push(I18nError('locales should be a non-empty array'))
-  }
-  if (!config.fallbackLocale) errors.push(I18nError('fallbackLocale is not specified'))
-  if (!config.localeFolder) errors.push(I18nError('localeFolder should be specified'))
-  return errors
-}
+// program.version('1.0.0')
+//   .option('-c, --config', 'Specify i18n.config.json file')
+//   .parse(process.argv)
 
-export function launchCLIApp(config: Config): void {
-  const errors = validateI18nConfig(config)
-  if (errors.length) {
-    console.error(formatErrors(errors))
-    return
-  }
-  // const locales = loadLocaleFiles(config.localeFolder, config.locales)
-  // console.log(locales)
-}
+// if (!program.config) {
+//   console.log('Please specify i18n.config.json file')
+// }
+
+const coreModulePath = path.dirname(require.resolve('@miniprogram-i18n/core/package.json'))
+
+declare var DEV: boolean
+
+const wxsCodePath = path.join(coreModulePath, DEV ? './dist/wxs.js' : 'wxs.js')
+console.log(wxsCodePath)
+
+const wxsCode = fs.readFileSync(wxsCodePath, 'utf-8')
+console.log(wxsCode)

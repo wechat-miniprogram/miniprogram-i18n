@@ -1,7 +1,6 @@
 import { CharCodes, WXS_LITERAL } from './types'
 import Parser from './parser'
 import { isLetter, isNumber } from './utils'
-import { Nullable } from '../../cli/types'
 
 interface Dumpable {
   dump(): object
@@ -28,7 +27,7 @@ export class AttributeValue {
 export class Element extends Node implements Dumpable {
   constructor(
     tagName: string,
-    public attributes: Map<string, Nullable<AttributeValue>>,
+    public attributes: Map<string, AttributeValue | null>,
     public children: Array<Node>,
   ) {
     super(tagName)

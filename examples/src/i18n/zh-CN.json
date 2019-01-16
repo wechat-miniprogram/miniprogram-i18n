@@ -1,5 +1,8 @@
 {
   "test": "测试消息",
   "test2": "测试消息二, {label}, {label2}",
-  "nested": "嵌套消息: {test}"
+  "nested": "嵌套消息: {test}",
+  "toggle": "切换语言",
+  "navigate": "跳转",
+  "window.title": "国际化测试"
 }
