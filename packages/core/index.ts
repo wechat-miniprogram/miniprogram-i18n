@@ -55,6 +55,10 @@ export class I18nRuntimeBase {
     return this.getString(key, options)
   }
 
+  getFallbackLocale() {
+    return this.fallbackLocale
+  }
+
   /**
    * const listener = onLocaleChange(() => {})
    * listener.off()
