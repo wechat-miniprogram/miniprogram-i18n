@@ -128,6 +128,8 @@ i18n.t('dotted', value)  // Nested value is: Catch you!
 
 其他尚未支持的特性有：
 
+- Pseudo 字符串
+
 - 单复数处理
 
 - 条件判断 / 选择语句

@@ -20,7 +20,7 @@ npm i -D gulp @miniprogram-i18n/gulp-locales-loader @miniprogram-i18n/gulp-wxml-
 npm i -S @miniprogram-i18n/core
 ```
 
-3. 在项目根目录新建 gulpfile.js，并编写构建脚本，可参考 [examples/gulpfile.js](./examples/gulpfile.js)。
+3. 在项目根目录新建 gulpfile.js，并编写构建脚本，可参考 [examples/gulpfile.js](../examples/gulpfile.js)。
 
 > 更多 Gulp 相关配置请参考 [Gulp插件配置文档](./gulp.md)。
 
@@ -28,7 +28,7 @@ npm i -S @miniprogram-i18n/core
 
 ### i18n文本定义
 
-miniprogram-i18n 目前采用 **JSON** 文件对 i18n 文本进行定义。在使用之前，在项目源文件下新建 i18n 目录。
+miniprogram-i18n 目前采用 **JSON** 文件对 i18n 文本进行定义。使用之前，需要在项目源文件下新建 i18n 目录。
 
 目录结构如下：
 
@@ -97,7 +97,7 @@ Component({
 t(key: string, params: object)
 ```
 
-它可以接受两个参数，第一个参数是 i18n 文本的 key，第二个参数是需要传入的参数（可以是从 AppService 传过来的值）。
+它可以接受两个参数，第一个参数是 i18n 文本的 key，第二个参数是需要传入的插值对象（可以是从 AppService 传过来的值）。
 
 ### JavaScript 中的用法
 
@@ -117,7 +117,7 @@ Component({
 })
 ```
 
-同样的，在 i18n 实例上，还暴露了其他的一些接口，例如获取当前语言、动态设置当前语言等。具体接口请参考 [接口文档](./api.md)。
+同样的，在 i18n 实例上，还暴露了其他一些接口，例如获取当前语言、动态设置当前语言等。具体接口请参考 [接口文档](./api.md)。
 
 如果你的 JavaScript 对应的 WXML 里已经使用了国际化文本，换言之，即 Component 构造器已经引入了 I18n Behavior，那么所有的实例方法都会被直接挂载到 this 上，你可以通过 this 调用它们。
 
@@ -174,6 +174,8 @@ i18n.t('dotted', value)  // Nested value is: Catch you!
 ```
 
 其他尚未支持的特性有：
+
+- Pseudo 字符串
 
 - 单复数处理
 

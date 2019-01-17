@@ -2,4 +2,5 @@
 <view class="container log-list">
   Locale: {{ $_locale }}
   {{ t('test') }}
+  <input placeholder="{{ t('test') }}"></input>
 </view>
