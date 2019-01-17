@@ -93,9 +93,6 @@ try {
 } catch (_) {}
 
 export function initI18n(translations: any, currentLocale: string) {
-  if (innerGlobals.i18nInstance && !translations) {
-    console.info('[i18n] i18n has already been initialized manually')
-  }
   if (!innerGlobals.i18nInstance) innerGlobals.i18nInstance = new I18nRuntimeBase(translations, currentLocale)
   return innerGlobals.i18nInstance
 }

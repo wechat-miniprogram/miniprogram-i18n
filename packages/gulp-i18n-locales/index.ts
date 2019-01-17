@@ -41,8 +41,9 @@ function parseTranslations(object: any) {
     if (typeof val === 'string') {
       object[key] = parseTranslation(val)
     }
+    // TODO: this is currently not supported
     if (typeof val === 'object') {
-      object[key] = parseTranslation(val)
+      object[key] = parseTranslations(val)
     }
   }
   return object
