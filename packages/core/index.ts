@@ -92,8 +92,8 @@ try {
   }
 } catch (_) {}
 
-export function initI18n(translations: any, currentLocale: string) {
-  if (!innerGlobals.i18nInstance) innerGlobals.i18nInstance = new I18nRuntimeBase(translations, currentLocale)
+export function initI18n(locales: any, currentLocale: string) {
+  if (!innerGlobals.i18nInstance) innerGlobals.i18nInstance = new I18nRuntimeBase(locales.translations, locales.defaultLocale, locales.fallbackLocale)
   return innerGlobals.i18nInstance
 }
 
