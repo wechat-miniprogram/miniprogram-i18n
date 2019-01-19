@@ -74,7 +74,7 @@ i18n.onLocaleChange((currentLocale) => {
 
 
 #### getLocale(): string
-获取当前设置的语言。
+获取当前设置的语言。默认语言应在 gulp 构建脚本中配置，详见 [Gulp插件配置文档](./gulp.md#gulp-locales-loader-配置)。
 
 
 
@@ -84,7 +84,7 @@ i18n.onLocaleChange((currentLocale) => {
 
 
 #### getFallbackLocale(): string
-获取备选语言。该值在构建脚本中进行配置，一旦设置之后无法在运行时通过接口进行修改。
+获取备选语言。该值在构建脚本中进行配置，一旦设置之后无法在运行时通过接口修改。详见 [Gulp插件配置文档](./gulp.md#gulp-locales-loader-配置)。
 
 
 
