@@ -3,7 +3,7 @@ miniprogram-i18n API 是运行时在 JavaScript 侧操作 i18n 的接口。
 
 ## 接口列表
 - [initI18n(localesConfig: object): I18n](./api.md#初始化-i18n-运行时)
-- [getI18nInstance(): I18n](./api.md#i18n-接口)
+- [getI18nInstance(): I18n](./api.md#获取-i18n-运行时)
 - [t(key: string, params: object): string](./api.md#tkey-string-params-object-string)
 - [getLocale(): string](./api.md#getlocale-string)
 - [setLocale(currentLocale: string): void](./api.md#setlocalecurrentlocale-string-void)
