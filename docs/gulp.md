@@ -39,12 +39,15 @@ interface Options {
 }
 ```
 - wxsPath
+  
   指定 locales.wxs 所在路径，应与 gulp-locales-loader 中的配置一致，默认为 `src/i18n/locales.wxs`。
 
 - wxsModuleName
+  
   指定 wxs 模块名称，默认为 `i18n`。
 
 - i18nFunctionName
+  
   指定 wxml 中的 i18n 函数名，默认为`t`，可修改为任意合法的函数名。
 
 ## gulp-locales-loader 配置
@@ -58,6 +61,7 @@ interface Options {
 }
 ```
 - wxsFileName
+  
   指定 locales wxs 文件名，需以 `.wxs` 作为后缀，默认为 `locales.wxs`。
 
 - jsFileName
