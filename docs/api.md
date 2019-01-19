@@ -79,12 +79,12 @@ i18n.onLocaleChange((currentLocale) => {
 
 
 #### setLocale(currentLocale: string): void
-设置当前语言。
+设置当前语言。该值应与 i18n 定义文件名相对应。
 
 
 
 #### getFallbackLocale(): string
-获取回退语言。该值在构建脚本中进行配置，一旦设置之后无法在运行时通过接口进行修改。
+获取备选语言。该值在构建脚本中进行配置，一旦设置之后无法在运行时通过接口进行修改。
 
 
 
