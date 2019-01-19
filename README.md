@@ -24,7 +24,7 @@ npm i -D gulp @miniprogram-i18n/gulp-locales-loader @miniprogram-i18n/gulp-wxml-
 npm i -S @miniprogram-i18n/core
 ```
 
-3. 在项目根目录新建 gulpfile.js，并编写构建脚本，可参考 [examples/gulpfile.js](./examples/gulpfile.js)。
+3. 在项目根目录新建 gulpfile.js，并编写构建脚本，可参考 [examples/gulpfile.js](./examples/gulpfile.js)。具体配置详见 [Gulp插件配置文档](./docs/gulp.md)。
 
 ## 使用
 
