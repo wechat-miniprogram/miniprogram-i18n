@@ -1,4 +1,5 @@
 # miniprogram-i18n
+[![CircleCI](https://circleci.com/gh/wechat-miniprogram/miniprogram-i18n.svg?style=svg)](https://circleci.com/gh/wechat-miniprogram/miniprogram-i18n)
 
 微信小程序的国际化 (i18n) 方案。为小程序的双线程模型定制，使用 WXS 环境作为 WXML 国际化的运行时，很大程度上减少了国际化在小程序中运行所需的开销。使用上，只需在 WXML 或 JavaScript 中调用翻译函数即可获得翻译文本。i18n 文本可以定义在任意位置，在构建过程中会被统一打包至指定路径。
 
