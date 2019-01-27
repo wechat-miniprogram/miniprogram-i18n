@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "build": "npm run build:js && npm run build:wxs",
+    "build:js": "rollup -c rollup.config.js",
     "build:wxs": "rollup -c rollup.wxs.config.js"
   },
   "author": "",
