@@ -34,3 +34,8 @@ test('Interpreter: interpolotion with deeply object but empty object', () => {
   const formatted = interpret(['start ', ['a.b.c'], ' end'], { a: {}})
   expect(formatted).toEqual('start {a.b.c} end')
 })
+
+test('Interpreter: select statements', () => {
+  const formatted = interpret(['taxableArea', 'select', {'other': ['No taxes apply.'], 'yes': [' An additional ', ['taxRate'], ' tax will be collected.']}])
+
+})

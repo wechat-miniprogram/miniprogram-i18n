@@ -3,6 +3,7 @@ type AST = Array<any>
 const EMPTY = ''
 
 export function interpret(message: AST, params?: any) {
+  console.log('message:', message)
   if (!message) return EMPTY
   if (typeof message === 'string') return message
   return message.reduce((acc, cur) => {
