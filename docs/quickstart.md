@@ -177,7 +177,7 @@ i18n.t('dotted', value)  // Nested value is: Catch you!
 
 ```json
 {
-  "key": "{gender, select, male {His inbox} female {Her inbox}other {Their inbox}}"
+  "key": "{gender, select, male {His inbox} female {Her inbox} other {Their inbox}}"
 }
 ```
 
@@ -187,7 +187,7 @@ i18n.t('key', { gender: 'female' })  // Her inbox
 i18n.t('key')                        // Their inbox
 ```
 
-select 语句也支持子语句文本插值：
+select 语句支持子语句文本插值：
 
 ```
 {
@@ -197,11 +197,11 @@ select 语句也支持子语句文本插值：
 
 ```js
 i18n.t('key', { mood: 'good', how: 'Awesome'  })  // Awesome day!
-i18n.t('key', { mood: 'sad', how: 'Unhappy'  })   // Unhappy day!
+i18n.t('key', { mood: 'sad', how: 'Unhappy'  })   // Unhappy day.
 i18n.t('key')                                     // Whatever!
 ```
 
-> 注：select 语句也支持子句嵌套 select
+> 注：select 语句支持子句嵌套 select 语句
 
 其他尚未支持的特性有：
 
