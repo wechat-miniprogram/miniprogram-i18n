@@ -74,3 +74,11 @@ test('Interpreter: select statements should return support boolean values 2', ()
   )
   expect(formatted).toEqual('An additional 20 tax will be collected.')
 })
+
+test('interpreter: select statements nested select statements', () => {
+  const formatted = interpret(
+    [['cond1', 'select', {'other': ['Cond 1 other'], 'yes': [['cond2', 'select', {'other': ['Cond 2 other'], 'yes': ['Cond 2 match', ', ', ['val']]}]]}]],
+    { cond1: 'yes', cond2: 'yes', val: 'extra value' },
+  )
+  expect(formatted).toEqual('Cond 2 match, extra value')
+})
