@@ -36,6 +36,41 @@ test('Interpreter: interpolotion with deeply object but empty object', () => {
 })
 
 test('Interpreter: select statements', () => {
-  const formatted = interpret(['taxableArea', 'select', {'other': ['No taxes apply.'], 'yes': [' An additional ', ['taxRate'], ' tax will be collected.']}])
+  const formatted = interpret(
+    [['taxableArea', 'select', {'other': ['No taxes apply.'], 'yes': ['An additional ', ['taxRate'], ' tax will be collected.']}]],
+    { taxableArea: 'yes', taxRate: 20 },
+  )
+  expect(formatted).toEqual('An additional 20 tax will be collected.')
+})
 
+test('Interpreter: select statements should support other fallback', () => {
+  const formatted = interpret(
+    [['taxableArea', 'select', {'other': ['No taxes apply.'], 'yes': ['An additional ', ['taxRate'], ' tax will be collected.']}]],
+    { taxableArea: 'no', taxRate: 20 },
+  )
+  expect(formatted).toEqual('No taxes apply.')
+})
+
+test('Interpreter: select statements should return child expr when params not provided', () => {
+  const formatted = interpret(
+    [['taxableArea', 'select', {'other': ['No taxes apply.'], 'yes': ['An additional ', ['taxRate'], ' tax will be collected.']}]],
+    { taxableArea: 'yes' },
+  )
+  expect(formatted).toEqual('An additional {taxRate} tax will be collected.')
+})
+
+test('Interpreter: select statements should return support boolean values', () => {
+  const formatted = interpret(
+    [['taxableArea', 'select', {'other': ['No taxes apply.'], true: ['An additional ', ['taxRate'], ' tax will be collected.']}]],
+    { taxableArea: true, taxRate: 20 },
+  )
+  expect(formatted).toEqual('An additional 20 tax will be collected.')
+})
+
+test('Interpreter: select statements should return support boolean values 2', () => {
+  const formatted = interpret(
+    [['taxableArea', 'select', {'other': ['No taxes apply.'], 'true': ['An additional ', ['taxRate'], ' tax will be collected.']}]],
+    { taxableArea: true, taxRate: 20 },
+  )
+  expect(formatted).toEqual('An additional 20 tax will be collected.')
 })

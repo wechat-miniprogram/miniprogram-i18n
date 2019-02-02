@@ -18,7 +18,7 @@ const notification = new Notification()
 
 export class I18nRuntimeBase {
   constructor(
-    public translations: any = {},
+    public translations: Record<string, any> = {},
     public currentLocale: string = Locale.default,
     public fallbackLocale: string = Locale.default,
   ) {

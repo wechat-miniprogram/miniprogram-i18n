@@ -2,8 +2,7 @@ type AST = Array<any>
 
 const EMPTY = ''
 
-export function interpret(message: AST, params?: any) {
-  console.log('message:', message)
+export function interpret(message: AST, params?: any): string {
   if (!message) return EMPTY
   if (typeof message === 'string') return message
   return message.reduce((acc, cur) => {
@@ -11,10 +10,26 @@ export function interpret(message: AST, params?: any) {
   }, []).join('')
 }
 
-function _eval(element: any, params: any) {
+function _eval(element: any, params: any): string {
   params = params || {}
   if (typeof element === 'string') {
     return element
+  }
+  if (element[2] && typeof element[2] === 'object') {
+    const childExprs = Object.keys(element[2]).reduce((acc: Record<string, string>, key: string) => {
+      acc[key] = interpret(element[2][key], params)
+      return acc
+    }, {}) as Record<string, string>
+    const target = childExprs[params[0]]
+    const value = params[element[0]]
+    if (typeof value !== 'undefined') {
+      return childExprs[value.toString()] || childExprs.other || EMPTY
+    }
+    if (target) {
+      return target
+    } else {
+      return childExprs.other || EMPTY
+    }
   }
   // Value interpolation, element should be an array
   if (typeof element === 'object' && element.length > 0) {

@@ -18,7 +18,7 @@ interface Options {
 const getWxsTag = (path: string, moduleName: string) => `<wxs src="${path}" module="${moduleName}" />\n`
 
 const gulpI18nWxmlTransformer = (options?: Options) => through.obj((file: File, _, cb) => {
-  const opts = options || { wxsPath: '', wxsModuleName: '', i18nFunctionName: ''}
+  const opts = options || { wxsPath: '', wxsModuleName: '', i18nFunctionName: '' }
   const wxsPath = opts.wxsPath || DEFAULT_WXS_PATH
   const wxsModuleName = opts.wxsModuleName || I18nModuleName.default
   const i18nFunctionName = opts.i18nFunctionName || TranslationFunction.default
