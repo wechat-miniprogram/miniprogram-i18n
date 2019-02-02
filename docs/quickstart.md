@@ -173,13 +173,42 @@ const value = {
 i18n.t('dotted', value)  // Nested value is: Catch you!
 ```
 
+#### select 语句
+
+```json
+{
+  "key": "{gender, select, male {His inbox} female {Her inbox}other {Their inbox}}"
+}
+```
+
+```js
+i18n.t('key', { gender: 'male' })    // His inbox
+i18n.t('key', { gender: 'female' })  // Her inbox
+i18n.t('key')                        // Their inbox
+```
+
+select 语句也支持子语句文本插值：
+
+```
+{
+  "key": "{mood, select, good {{how} day!} sad {{how} day.} other {Whatever!}}"
+}
+```
+
+```js
+i18n.t('key', { mood: 'good', how: 'Awesome'  })  // Awesome day!
+i18n.t('key', { mood: 'sad', how: 'Unhappy'  })   // Unhappy day!
+i18n.t('key')                                     // Whatever!
+```
+
+> 注：select 语句也支持子句嵌套 select
+
 其他尚未支持的特性有：
 
 - Pseudo 字符串
 
 - 单复数处理
 
-- 条件判断 / 选择语句
 - 日期、数字、货币处理
 - 定义文件的命名空间
 - 支持 WXML 与 JavaScript 独立定义
