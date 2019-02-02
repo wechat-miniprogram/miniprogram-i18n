@@ -1,8 +1,9 @@
-type AST = Array<any>
+type Element = string | any
+type AST = Array<Element>
 
 const EMPTY = ''
 
-export function interpret(message: AST, params?: any): string {
+export function interpret(message: AST, params?: Record<string, any>): string {
   if (!message) return EMPTY
   if (typeof message === 'string') return message
   return message.reduce((acc, cur) => {
@@ -10,7 +11,7 @@ export function interpret(message: AST, params?: any): string {
   }, []).join('')
 }
 
-function _eval(element: any, params: any): string {
+function _eval(element: string | any[], params?: Record<string, any>): string {
   params = params || {}
   if (typeof element === 'string') {
     return element
