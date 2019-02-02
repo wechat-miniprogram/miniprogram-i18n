@@ -8,7 +8,7 @@ miniprogram-i18n API 是运行时在 JavaScript 侧操作 i18n 的接口。
 - [getLocale(): string](./api.md#getlocale-string)
 - [setLocale(currentLocale: string): void](./api.md#setlocalecurrentlocale-string-void)
 - [getFallbackLocale(): string](./api.md#getfallbacklocale-string)
-- [onLocaleChange(handler: (currentLocale: string) => void): void](./api.md#onlocalechangehandler-currentlocale-string--void-void) 
+- [onLocaleChange(handler: (currentLocale: string) => void): object](./api.md#onlocalechangehandler-currentlocale-string--void-void) 
 
 ### 初始化 I18n 运行时
 #### initI18n(localesConfig: object): I18n
@@ -87,5 +87,9 @@ i18n.onLocaleChange((currentLocale) => {
 
 
 
-#### onLocaleChange(handler: (currentLocale: string) => void): void 
-当前语言被修改时触发的事件回调。
+#### onLocaleChange(handler: (currentLocale: string) => void): object
+当前语言被修改时触发的事件回调。返回值 object，可通过返回值对象取消事件监听。
+```js
+const event = i18n.onLocaleChange(() => {})
+event.off()
+```
