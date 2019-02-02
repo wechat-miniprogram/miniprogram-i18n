@@ -82,3 +82,11 @@ test('interpreter: select statements nested select statements', () => {
   )
   expect(formatted).toEqual('Cond 2 match, extra value')
 })
+
+test('interpreter: select statements with normal strings', () => {
+  const formatted = interpret(
+    ['Start ', ['cond1', 'select', {'other': ['Cond 1 other'], 'yes': ['middle ', ['cond2', 'select', {'other': ['Cond 2 other'], 'yes': ['Cond 2 match', ', ', ['val']]}]]}], ' end'],
+    { cond1: 'yes', cond2: 'yes', val: 'extra value' },
+  )
+  expect(formatted).toEqual('Start middle Cond 2 match, extra value end')
+})
