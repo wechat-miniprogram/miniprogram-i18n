@@ -2,10 +2,11 @@ import Notification, { Handler } from './notification'
 import { interpret } from './interpreter'
 import { lookUpAST } from './common'
 
-export interface MiniProgramI18nInterface {
-  getString(key: string, params?: object): string
+export interface CommonI18nInterface {
+  t(key: string, params?: object): string
   getLocale(): string
   setLocale(locale: string): void
+  onLocaleChange(handler: Handler): void
 }
 
 export const enum Locale {
@@ -16,7 +17,7 @@ const LOCALE_CHANGE_NOTIFICATION_NAME = 'localeChange'
 
 const notification = new Notification()
 
-export class I18nRuntimeBase {
+export class I18nRuntimeBase implements CommonI18nInterface {
   constructor(
     public translations: Record<string, any> = {},
     public currentLocale: string = Locale.default,
@@ -135,7 +136,7 @@ export function I18nPage(pageObject: PageObject) {
     throw new Error('[i18n] conflict page method [' + LOCALE_CHANGE_HANDLER_NAME + '] with I18n library')
   }
 
-  const hooks: PageObject = {
+  const hooks: PageObject & CommonI18nInterface = {
     [LOCALE_CHANGE_HANDLER_NAME](currentLocale: string) {
       (this as any).setData({
         [CURRENT_LOCALE_KEY]: currentLocale,
@@ -194,9 +195,10 @@ export function I18nPage(pageObject: PageObject) {
   return Page(Object.assign({}, pageObject, hooks))
 }
 
+type Func = (...args: any[]) => any
 
 export const I18n = Behavior((() => {
-  const behaviorHooks = {
+  const behaviorHooks: Record<string, Record<string, Func> | CommonI18nInterface> = {
     lifetimes: {
       created() {
         (this as any)[LOCALE_CHANGE_HANDLER_NAME] = (currentLocale: string) => {
@@ -223,35 +225,35 @@ export const I18n = Behavior((() => {
       },
     },
 
-    methods: {},
-  };
+    methods: {
+      t(key: string, params: object) {
+        if (!innerGlobals.i18nInstance) {
+          throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
+        }
+        return innerGlobals.i18nInstance.getString(key, params)
+      },
 
-  (behaviorHooks.methods as any).t = (key: string, params: object) => {
-    if (!innerGlobals.i18nInstance) {
-      throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
-    }
-    return innerGlobals.i18nInstance.getString(key, params)
-  }
+      setLocale(locale: string) {
+        if (!innerGlobals.i18nInstance) {
+          throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
+        }
+        return innerGlobals.i18nInstance.setLocale(locale)
+      },
 
-  (behaviorHooks.methods as any).setLocale = (locale: string) => {
-    if (!innerGlobals.i18nInstance) {
-      throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
-    }
-    return innerGlobals.i18nInstance.setLocale(locale)
-  }
+      getLocale() {
+        if (!innerGlobals.i18nInstance) {
+          throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
+        }
+        return innerGlobals.i18nInstance.getLocale()
+      },
 
-  (behaviorHooks.methods as any).getLocale = () => {
-    if (!innerGlobals.i18nInstance) {
-      throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
-    }
-    return innerGlobals.i18nInstance.getLocale()
-  }
-
-  (behaviorHooks.methods as any).onLocaleChange = (handler: Handler) => {
-    if (!innerGlobals.i18nInstance) {
-      throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
-    }
-    return innerGlobals.i18nInstance.onLocaleChange(handler)
+      onLocaleChange(handler: Handler) {
+        if (!innerGlobals.i18nInstance) {
+          throw new Error('[i18n] ensure run initI18n() in app.js before using I18n library')
+        }
+        return innerGlobals.i18nInstance.onLocaleChange(handler)
+      },
+    } as CommonI18nInterface,
   }
 
   return behaviorHooks
