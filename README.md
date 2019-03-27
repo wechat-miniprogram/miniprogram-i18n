@@ -19,7 +19,7 @@
 npm i -D gulp @miniprogram-i18n/gulp-i18n-locales @miniprogram-i18n/gulp-i18n-wxml
 ```
 
-2. 在小程序运行环境下安装国际化运行时：
+2. 在小程序运行环境下安装国际化运行时并在开发工具"构建npm"。
 
 ```
 npm i -S @miniprogram-i18n/core

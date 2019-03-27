@@ -1,4 +1,4 @@
-import { getI18nInstance } from './bundle'
+import { getI18nInstance } from '@miniprogram-i18n/core'
 
 const i18n = getI18nInstance()
 

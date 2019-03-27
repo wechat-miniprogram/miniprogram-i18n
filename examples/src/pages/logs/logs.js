@@ -1,4 +1,4 @@
-import { I18n } from '../../bundle'
+import { I18n } from '@miniprogram-i18n/core'
 
 Component({
   data: {

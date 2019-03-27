@@ -1,4 +1,4 @@
-import { I18nPage } from '../../bundle'
+import { I18nPage } from '@miniprogram-i18n/core'
 
 I18nPage({
   onLoad() {
