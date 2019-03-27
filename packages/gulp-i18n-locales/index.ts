@@ -5,7 +5,7 @@ import through from 'through2'
 import PluginError from 'plugin-error'
 import { parseTranslation } from '@miniprogram-i18n/compile'
 
-const PLUGIN_NAME = '@miniprogram-i18n/gulp-locales-loader'
+const PLUGIN_NAME = '@miniprogram-i18n/gulp-i18n-locales'
 
 const DEFAULT_WXS_FILENAME = 'locales.wxs'
 const DEFAULT_JS_FILENAME = 'locales.js'

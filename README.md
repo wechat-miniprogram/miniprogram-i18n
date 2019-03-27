@@ -16,7 +16,7 @@
 1. 首先在项目根目录运行以下命令安装 gulp 及 miniprogram-i18n 的 gulp 插件。
 
 ```
-npm i -D gulp @miniprogram-i18n/gulp-locales-loader @miniprogram-i18n/gulp-wxml-transformer
+npm i -D gulp @miniprogram-i18n/gulp-i18n-locales @miniprogram-i18n/gulp-i18n-wxml
 ```
 
 2. 在小程序运行环境下安装国际化运行时：

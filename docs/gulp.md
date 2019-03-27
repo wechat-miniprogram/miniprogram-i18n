@@ -1,5 +1,5 @@
 # Gulp 插件配置文档
-miniprogram-i18n 在构建阶段依赖两个 Gulp 插件，分别是 `@miniprogram-i18n/gulp-wxml-transformer` 和 `@miniprogram-i18n/gulp-locales-loader`，`gulp-wxml-transfomer` 负责转译 wxml 文件中的 i18n 自定义语法，`gulp-locales-loader` 则负责合并 i18n 定义文件，并进行预处理生成运行时所需的文件。
+miniprogram-i18n 在构建阶段依赖两个 Gulp 插件，分别是 `@miniprogram-i18n/gulp-i18n-wxml` 和 `@miniprogram-i18n/gulp-i18n-locales`，`gulp-i18n-wxml` 负责转译 wxml 文件中的 i18n 自定义语法，`gulp-i18n-locales` 则负责合并 i18n 定义文件，并进行预处理生成运行时所需的文件。
 
 > 若使用 CLI 进行构建，则可忽略 Gulp 构建的配置。
 
@@ -7,13 +7,13 @@ miniprogram-i18n 在构建阶段依赖两个 Gulp 插件，分别是 `@miniprogr
 因此在使用 i18n 的构建插件之前，需要先安装相关依赖。
 
 ```
-npm i -D gulp @miniprogram-i18n/gulp-locales-loader @miniprogram-i18n/gulp-wxml-transformer
+npm i -D gulp @miniprogram-i18n/gulp-i18n-locales @miniprogram-i18n/gulp-i18n-wxml
 ```
 
 依赖安装完成之后，需要建立 gulp 所需的配置并引入 i18n 构建插件。示例如下：
 ```js
-const gulpWxmlTransformer = require('@miniprogram-i18n/gulp-wxml-transformer')
-const gulpLocalesLoader = require('@miniprogram-i18n/gulp-locales-loader')
+const gulpWxmlTransformer = require('@miniprogram-i18n/gulp-i18n-wxml')
+const gulpLocalesLoader = require('@miniprogram-i18n/gulp-i18n-locales')
 
 function transpileWxml() {
   return src('src/**/*.wxml')
@@ -29,7 +29,7 @@ function mergeAndGenerateLocales() {
 
 更详细的配置请参考 [examples](../examples/gulpfile.js)。
 
-## gulp-wxml-transformer 配置
+## gulp-i18n-wxml 配置
 该构建函数支持如下参数：
 ```typescript
 interface Options {
@@ -40,7 +40,7 @@ interface Options {
 ```
 - wxsPath
   
-  指定 locales.wxs 所在路径，应与 gulp-locales-loader 中的配置一致，默认为 `src/i18n/locales.wxs`。
+  指定 locales.wxs 所在路径，应与 gulp-i18n-locales 中的配置一致，默认为 `src/i18n/locales.wxs`。
 
 - wxsModuleName
   
@@ -50,7 +50,7 @@ interface Options {
   
   指定 wxml 中的 i18n 函数名，默认为`t`，可修改为任意合法的函数名。
 
-## gulp-locales-loader 配置
+## gulp-i18n-locales 配置
 该构建函数支持如下参数：
 ```typescript
 interface Options {
