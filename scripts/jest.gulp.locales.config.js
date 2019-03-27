@@ -3,7 +3,8 @@ module.exports = {
   globals: {
     "ts-jest": {
       "tsConfig": "packages/gulp-i18n-locales/tsconfig.json"
-    }
+    },
+    '__DEV__': true
   },
 
   // An array of file extensions your modules use

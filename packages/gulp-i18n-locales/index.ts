@@ -15,8 +15,10 @@ const DEFAULT_FALLBACK_LOCALE = 'en-US'
 
 const CORE_PATH = path.dirname(require.resolve('@miniprogram-i18n/core/package.json'))
 
+declare var __DEV__: boolean
+
 function getWxsCode() {
-  const code = fs.readFileSync(path.join(CORE_PATH, '/wxs.js'), 'utf-8')
+  const code = fs.readFileSync(path.join(CORE_PATH, __DEV__ ? 'dist/wxs.js': '/wxs.js'), 'utf-8')
   // FIXME: function name maybe mangled
   const runner = `module.exports.t = Interpreter.getMessageInterpreter(translations, fallbackLocale)`
   return [code, runner].join('\n')

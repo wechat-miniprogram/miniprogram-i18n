@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript';
+import replace from 'rollup-plugin-replace';
 
 module.exports = {
   input: 'index.ts',
@@ -7,6 +8,9 @@ module.exports = {
     format: 'cjs'
   },
   plugins: [
-    typescript()
+    typescript(),
+    replace({
+      __DEV__: JSON.stringify(process.env.NODE_ENV === 'dev'),
+    }),
   ]
 }
