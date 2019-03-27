@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "format-message-interpret": "^6.2.0"
+    "@miniprogram-i18n/core": "^1.0.0-rc.1"
   }
 }

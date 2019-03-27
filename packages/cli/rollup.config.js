@@ -10,7 +10,7 @@ module.exports = {
   plugins: [
     typescript(),
     replace({
-      DEV: 'true',
+      DEV: 'false',
     }),
   ]
 }

@@ -1,10 +1,13 @@
 {
   "name": "@miniprogram-i18n/compile",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.3",
   "description": "",
   "main": "index.js",
   "author": "wechat-miniprogram",
   "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && tsc && cp package.json dist"
+  },
   "dependencies": {
     "commander": "^2.19.0",
     "format-message-parse": "^6.2.0"

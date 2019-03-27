@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript';
+import { uglify } from "rollup-plugin-uglify";
 
 module.exports = {
   input: 'wxs/index.ts',
@@ -10,5 +11,6 @@ module.exports = {
   },
   plugins: [
     typescript(),
+    uglify()
   ]
 }

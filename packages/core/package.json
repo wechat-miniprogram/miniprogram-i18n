@@ -1,10 +1,10 @@
 {
   "name": "@miniprogram-i18n/core",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.3",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:js && npm run build:wxs",
+    "build": "rm -rf dist && npm run build:js && npm run build:wxs && cp package.json dist",
     "build:js": "rollup -c rollup.config.js",
     "build:wxs": "rollup -c rollup.wxs.config.js"
   },

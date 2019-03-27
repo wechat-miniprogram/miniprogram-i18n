@@ -83,11 +83,10 @@ const innerGlobals: Global = {
   i18nInstance: null,
 }
 
-// Find locales by default from /i18n/locales.js
-const DEFAULT_LOCALE_PATH = '/i18n/locales.js'
 try {
+  // Find locales by default from /i18n/locales.js
   // tslint:disable-next-line
-  const locales = require(DEFAULT_LOCALE_PATH)
+  const locales = require('../../../i18n/locales.js')
   if (locales && locales.translations) {
     innerGlobals.i18nInstance = new I18nRuntimeBase(locales.translations, locales.defaultLocale, locales.fallbackLocale)
   }

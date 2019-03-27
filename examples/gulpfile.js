@@ -1,6 +1,6 @@
 const { src, dest, series } = require('gulp');
-const gulpI18nWxml = require('../packages/gulp-i18n-wxml/dist/bundle')
-const gulpI18nLocales = require('../packages/gulp-i18n-locales/dist/bundle')
+const gulpI18nWxml = require('@miniprogram-i18n/gulp-i18n-wxml')
+const gulpI18nLocales = require('@miniprogram-i18n/gulp-i18n-locales')
 
 function mergeAndGenerateLocales() {
   return src('src/**/i18n/*.json')

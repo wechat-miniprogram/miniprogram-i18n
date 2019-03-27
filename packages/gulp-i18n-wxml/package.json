@@ -1,15 +1,15 @@
 {
-  "name": "@miniprogram-i18n/gulp-wxml-transformer",
-  "version": "1.0.0",
+  "name": "@miniprogram-i18n/gulp-i18n-wxml",
+  "version": "1.0.0-rc.3",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js"
+    "build": "rm -rf dist && rollup -c rollup.config.js && cp package.json dist"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@miniprogram-i18n/compile": "^1.0.0",
+    "@miniprogram-i18n/compile": "^1.0.0-rc.3",
     "format-message-parse": "^6.2.0",
     "plugin-error": "^1.0.1",
     "through2": "^3.0.0",

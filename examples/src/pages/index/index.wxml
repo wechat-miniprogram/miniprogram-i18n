@@ -7,3 +7,4 @@
 </view>
 <button bindtap="toggleLocale">{{ t('toggle') }}</button>
 <button bindtap="nativate">{{ t('navigate') }}</button>
+<button bindtap="nativate">{{ t('navigate2') }}</button>

@@ -11,7 +11,7 @@
 
 ## 安装
 
-该方案目前需要依赖 Gulp 并且对源文件目录结构有一定的要求，需要确保小程序源文件放置在特定目录下（例如 src/ 目录）。
+该方案目前需要依赖 Gulp 并且对源文件目录结构有一定的要求，需要确保小程序源文件放置在特定目录下（例如 src/ 目录）：
 
 1. 首先在项目根目录运行以下命令安装 gulp 及 miniprogram-i18n 的 gulp 插件。
 
@@ -19,7 +19,7 @@
 npm i -D gulp @miniprogram-i18n/gulp-locales-loader @miniprogram-i18n/gulp-wxml-transformer
 ```
 
-2. 安装小程序国际化运行时。
+2. 在小程序运行环境下安装国际化运行时：
 
 ```
 npm i -S @miniprogram-i18n/core
