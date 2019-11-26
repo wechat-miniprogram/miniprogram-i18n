@@ -37,7 +37,10 @@ const gulpI18nWxmlTransformer = (options?: Options) => through.obj((file: File, 
   }
   try {
     const transformedContents = transfomer.transform(file.contents.toString('utf-8'))
-    const relativeWxsPath = path.relative(path.dirname(file.path), wxsPath)
+    let relativeWxsPath = path.relative(path.dirname(file.path), wxsPath)
+    if (process.platform === 'win32') {
+      relativeWxsPath = relativeWxsPath.replace(/\\/g, '/')
+    }
     const wxsTag = getWxsTag(relativeWxsPath, wxsModuleName)
     file.contents = Buffer.concat([Buffer.from(wxsTag), Buffer.from(transformedContents)])
   } catch (err) {
