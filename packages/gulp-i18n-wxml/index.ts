@@ -7,7 +7,7 @@ import PluginError from 'plugin-error'
 const PLUGIN_NAME = '@miniprogram-i18n/gulp-i18n-wxml'
 
 // Assume source folder is src
-const DEFAULT_WXS_PATH = 'src/i18n/locales.wxs'
+const DEFAULT_WXS_PATH = path.resolve('src/i18n/locales.wxs')
 
 interface Options {
   wxsPath: string,
