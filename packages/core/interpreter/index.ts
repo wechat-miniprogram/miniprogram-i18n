@@ -36,7 +36,7 @@ function _eval(element: string | any[], params?: Record<string, any>): string {
   if (typeof element === 'object' && element.length > 0) {
     const paramName = element[0]
     const tokens = paramName.split('.')
-    return getParams(tokens, params)
+    return getParams(tokens, params, 0)
   }
   return ''
 }
