@@ -8,6 +8,7 @@
 - [快速入门](./docs/quickstart.md)
 - [接口文档](./docs/api.md)
 - [Gulp插件配置文档](./docs/gulp.md)
+- [example 示例工程文档](./examples/README.md)
 
 ## 安装
 
