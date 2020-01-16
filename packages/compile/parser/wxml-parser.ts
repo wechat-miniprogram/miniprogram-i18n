@@ -175,8 +175,9 @@ export default class WxmlParser extends Parser {
   parseText() {
     const start = this.pos
     if (this.state === WxmlState.WXS) {
-      while (!this.eof() && !this.match(CharCodes.LESS_THAN)) {
-        this.consumeQuoteString()
+      while (!this.eof() && !(this.match(CharCodes.LESS_THAN) && this.match(CharCodes.SLASH, this.pos + 1))) {
+        if (this.consumeQuoteString()) continue
+        if (this.consumeWXSComments()) continue
         this.advance()
       }
       return new Text(this.source.substring(start, this.pos), start, this.pos)
@@ -254,5 +255,34 @@ export default class WxmlParser extends Parser {
     }
     const attribute = new AttributeValue(value, start, end)
     return attribute
+  }
+
+  consumeWXSComments(): boolean {
+    if (this.match(CharCodes.SLASH) && this.match(CharCodes.SLASH, this.pos + 1)) {
+      while (!this.eof()) {
+        if (this.match(CharCodes.LINE_FEED)) {
+          this.advance()
+          return true
+        }
+        if (this.match(CharCodes.CARRIAGE_RETURN) && this.match(CharCodes.LINE_FEED)) {
+          this.advance(2)
+          return true
+        }
+        // If no line end is met we should end at this point
+        if (this.match(CharCodes.LESS_THAN) && this.match(CharCodes.SLASH, this.pos + 1)) {
+          return true
+        }
+        this.advance()
+      }
+    } else if (this.match(CharCodes.SLASH) && this.match(CharCodes.ASTERISK, this.pos + 1)) {
+      while (!this.eof()) {
+        if (this.match(CharCodes.ASTERISK) && this.match(CharCodes.SLASH, this.pos + 1)) {
+          this.advance(2)
+          return true
+        }
+        this.advance()
+      }
+    }
+    return false
   }
 }

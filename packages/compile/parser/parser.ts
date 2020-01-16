@@ -12,15 +12,18 @@ export default class Parser {
     return ch
   }
 
-  consumeQuoteString() {
+  consumeQuoteString(): boolean {
     if (this.match(CharCodes.SINGLE_QUOTE) || this.match(CharCodes.DOUBLE_QUOTE) || this.match(CharCodes.BACK_QUOTE)) {
       const quoteType = this.consumeChar()
       while (!this.eof() && !this.match(quoteType)) {
         if (this.match(CharCodes.BACK_SLASH) && this.match(quoteType, this.pos + 1)) {
           this.advance(2)
+          return true
         } else this.advance()
       }
     }
+
+    return false
   }
 
   advance(step?: number) {

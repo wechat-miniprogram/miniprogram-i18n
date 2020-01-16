@@ -16,6 +16,7 @@ export const enum CharCodes {
   LEFT_PAREN = 0x28,          // (
   RIGHT_PAREN = 0x29,         // (
   DOT = 0x2E,                 // .
+  ASTERISK = 0x2A,            // *
 
   TAB = 0x09,                 // \t
   LINE_FEED = 0x0A,           // \n

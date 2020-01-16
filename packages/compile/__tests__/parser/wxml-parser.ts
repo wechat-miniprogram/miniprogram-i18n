@@ -223,6 +223,59 @@ const testCases = [
     expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var s = `<wxs></wxs>`' }] }],
   },
   {
+    name: 'wxs tag should be ignored even if there are <',
+    input: '<wxs>var r = 1 < 5;</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 < 5;' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are <<',
+    input: '<wxs>var r = 1 << 5;</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 << 5;' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are <=',
+    input: '<wxs>var r = 1 <= 5;</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 <= 5;' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are >',
+    input: '<wxs>var r = 1 > 5;</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 > 5;' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are >',
+    input: '<wxs>var r = 1 >> 5;</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 >> 5;' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are >=',
+    input: '<wxs>var r = 1 >= 5;</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 >= 5;' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are < in comments',
+    input: '<wxs>//</wxs></wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: '//</wxs>' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are < in multi-line comments',
+    input: '<wxs>/*</wxs>*//* </wxs> */</wxs>',
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: '/*</wxs>*//* </wxs> */' }] }],
+  },
+  {
+    name: 'wxs tag should be ignored even if there are < in comments 2',
+    input: `
+<wxs>
+  // </wxs>
+</wxs>`,
+    expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: '// </wxs>\n' }] }],
+  },
+  // {
+  //   name: 'wxs tag should be ignored even if there are < in block comments',
+  //   input: '<wxs> /*</wxs>*/ </wxs>',
+  //   expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 >= 5;' }] }],
+  // },
+  {
     name: 'unfinished tag',
     input: '<view',
     expectThrows: true,
