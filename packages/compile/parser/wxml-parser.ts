@@ -176,9 +176,9 @@ export default class WxmlParser extends Parser {
     const start = this.pos
     if (this.state === WxmlState.WXS) {
       while (!this.eof() && !(this.match(CharCodes.LESS_THAN) && this.match(CharCodes.SLASH, this.pos + 1))) {
-        if (this.consumeQuoteString()) continue
-        if (this.consumeWXSComments()) continue
-        this.advance()
+        if (!this.consumeQuoteString() && !this.consumeWXSComments()) {
+          this.advance()
+        }
       }
       return new Text(this.source.substring(start, this.pos), start, this.pos)
     }
@@ -262,26 +262,28 @@ export default class WxmlParser extends Parser {
       while (!this.eof()) {
         if (this.match(CharCodes.LINE_FEED)) {
           this.advance()
-          return true
+          break
         }
         if (this.match(CharCodes.CARRIAGE_RETURN) && this.match(CharCodes.LINE_FEED)) {
           this.advance(2)
-          return true
+          break
         }
         // If no line end is met we should end at this point
         if (this.match(CharCodes.LESS_THAN) && this.match(CharCodes.SLASH, this.pos + 1)) {
-          return true
+          return false
         }
         this.advance()
       }
+      return true
     } else if (this.match(CharCodes.SLASH) && this.match(CharCodes.ASTERISK, this.pos + 1)) {
       while (!this.eof()) {
         if (this.match(CharCodes.ASTERISK) && this.match(CharCodes.SLASH, this.pos + 1)) {
           this.advance(2)
-          return true
+          break
         }
         this.advance()
       }
+      return true
     }
     return false
   }
