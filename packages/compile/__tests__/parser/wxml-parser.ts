@@ -270,11 +270,6 @@ const testCases = [
 </wxs>`,
     expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: '// </wxs>\n' }] }],
   },
-  // {
-  //   name: 'wxs tag should be ignored even if there are < in block comments',
-  //   input: '<wxs> /*</wxs>*/ </wxs>',
-  //   expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: 'var r = 1 >= 5;' }] }],
-  // },
   {
     name: 'unfinished tag',
     input: '<view',
