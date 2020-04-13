@@ -189,15 +189,20 @@ export default class WxmlParser extends Parser {
   parseTextContents() {
     const result: Array<string> = []
     while (!this.eof() && (!this.match(CharCodes.LESS_THAN) || this.state === WxmlState.INT)) {
-      const ch = this.source[this.pos]
       if (this.match(CharCodes.LEFT_CURLY_BRACE) && this.match(CharCodes.LEFT_CURLY_BRACE, this.pos + 1)) {
         this.state = WxmlState.INT
       }
       if (this.match(CharCodes.RIGHT_CURLY_BRACE) && this.match(CharCodes.RIGHT_CURLY_BRACE, this.pos + 1)) {
         this.state = WxmlState.NORMAL
       }
-      this.advance()
+      const quoteStringRef = { result: '' }
+      if (this.consumeQuoteString(quoteStringRef)) {
+        result.push(quoteStringRef.result)
+        continue
+      }
+      const ch = this.source[this.pos]
       result.push(ch)
+      this.advance()
     }
     return result.join('')
   }

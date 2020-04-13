@@ -1,6 +1,8 @@
 import { isWhitespace } from './utils'
 import { CharCodes } from './types'
 
+type QuoteStringResultRef = { result?: string }
+
 export default class Parser {
   protected pos: number = 0
 
@@ -12,7 +14,8 @@ export default class Parser {
     return ch
   }
 
-  consumeQuoteString() {
+  consumeQuoteString(resultRef: QuoteStringResultRef = {}) {
+    const start = this.pos
     if (this.match(CharCodes.SINGLE_QUOTE) || this.match(CharCodes.DOUBLE_QUOTE) || this.match(CharCodes.BACK_QUOTE)) {
       const quoteType = this.consumeChar()
       while (!this.eof() && !this.match(quoteType)) {
@@ -21,6 +24,7 @@ export default class Parser {
         } else this.advance()
       }
       if (this.match(quoteType)) this.advance()
+      resultRef.result = this.source.substring(start, this.pos)
       return true
     }
     return false

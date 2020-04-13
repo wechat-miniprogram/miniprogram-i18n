@@ -276,6 +276,11 @@ const testCases = [
     expected: [{ type: 'view', attributes: {}, children: [{ type: 'text', content: '{{1 < 5 ? true : false}}' }] }],
   },
   {
+    name: 'interpolation block should be ignored when there is ambiguous quoted string',
+    input: `<view>{{"}}" < 1}}</view>`,
+    expected: [{ type: 'view', attributes: {}, children: [{ type: 'text', content: '{{"}}" < 1}}' }] }],
+  },
+  {
     name: 'bare interpolation block should be ignored in case there are < character',
     input: `{{1 < 5 ? true : "<test>"}}`,
     expected: [{ type: 'text', content: '{{1 < 5 ? true : "<test>"}}' }],
