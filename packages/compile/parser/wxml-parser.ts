@@ -65,8 +65,9 @@ export class Text extends Node implements Dumpable {
 }
 
 export const enum WxmlState {
-  NORMAL = 0x01,
-  WXS = 0x02,
+  NORMAL = 0x01 << 0,
+  WXS = 0x01 << 1,
+  INT = 0x01 << 2,
 }
 
 /**
@@ -89,7 +90,7 @@ export default class WxmlParser extends Parser {
         break
       }
 
-      // <!--
+      // Ignore comments
       if (
         this.match(CharCodes.LESS_THAN, this.pos) &&
         this.match(CharCodes.EXCLAMATION, this.pos + 1) &&
@@ -182,7 +183,23 @@ export default class WxmlParser extends Parser {
       }
       return new Text(this.source.substring(start, this.pos), start, this.pos)
     }
-    return new Text(this.consumeWhile(ch => ch !== CharCodes.LESS_THAN), start, this.pos)
+    return new Text(this.parseTextContents(), start, this.pos)
+  }
+
+  parseTextContents() {
+    const result: Array<string> = []
+    while (!this.eof() && (!this.match(CharCodes.LESS_THAN) || this.state === WxmlState.INT)) {
+      const ch = this.source[this.pos]
+      if (this.match(CharCodes.LEFT_CURLY_BRACE) && this.match(CharCodes.LEFT_CURLY_BRACE, this.pos + 1)) {
+        this.state = WxmlState.INT
+      }
+      if (this.match(CharCodes.RIGHT_CURLY_BRACE) && this.match(CharCodes.RIGHT_CURLY_BRACE, this.pos + 1)) {
+        this.state = WxmlState.NORMAL
+      }
+      this.advance()
+      result.push(ch)
+    }
+    return result.join('')
   }
 
   /**

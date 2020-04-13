@@ -270,6 +270,16 @@ const testCases = [
 </wxs>`,
     expected: [{ type: 'wxs', attributes: {}, children: [{ type: 'text', content: '// </wxs>\n' }] }],
   },
+  {
+    name: 'interpolation block should be ignored in case there are < character',
+    input: `<view>{{1 < 5 ? true : false}}</view>`,
+    expected: [{ type: 'view', attributes: {}, children: [{ type: 'text', content: '{{1 < 5 ? true : false}}' }] }],
+  },
+  {
+    name: 'bare interpolation block should be ignored in case there are < character',
+    input: `{{1 < 5 ? true : "<test>"}}`,
+    expected: [{ type: 'text', content: '{{1 < 5 ? true : "<test>"}}' }],
+  },
   // {
   //   name: 'wxs tag should be ignored even if there are < in block comments',
   //   input: '<wxs> /*</wxs>*/ </wxs>',
