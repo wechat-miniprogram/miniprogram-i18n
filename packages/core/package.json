@@ -1,8 +1,8 @@
 {
   "name": "@miniprogram-i18n/core",
-  "version": "1.0.0-rc.7",
+  "version": "1.0.0-rc.8",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "rm -rf dist && npm run build:js && npm run build:wxs && cp package.json dist",
     "build:js": "rollup -c rollup.config.js",
@@ -10,6 +10,7 @@
   },
   "author": "",
   "license": "MIT",
+  "miniprogram": "lib",
   "dependencies": {
     "format-message-interpret": "^6.2.0",
     "message-format": "^6.2.0",
