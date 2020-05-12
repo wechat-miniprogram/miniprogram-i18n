@@ -44,14 +44,14 @@ function _eval(element: string | any[], params?: Record<string, any>): string {
 function getParams(tokens: Array<any>, params: any, i: number = 0): string {
   if (!params || !tokens || tokens.length <= 0) return ''
   const current = params[tokens[i]]
-  if (!current) {
-    return `{${tokens.join('.')}}`
-  }
   if (typeof current === 'string') {
     return current
   }
   if (typeof current === 'number') {
     return current.toString()
+  }
+  if (!current) {
+    return `{${tokens.join('.')}}`
   }
   return getParams(tokens, current, ++i)
 }
