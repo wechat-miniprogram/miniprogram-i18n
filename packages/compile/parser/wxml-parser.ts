@@ -78,11 +78,25 @@ export default class WxmlParser extends Parser {
 
   constructor(
     public source: string,
+    public fileName: string = ''
   ) {
-    super(source)
+    super(source, fileName)
   }
 
   parse() {
+    try {
+      const nodes = this._parse()
+      return nodes
+    } catch (e) {
+      if (this.fileName) {
+        e.message += `\nfile: ${this.fileName}`
+      }
+      e.message += `\nline: ${this.line}, column: ${this.column}\n\n${this.currentContext()}`
+      throw e
+    }
+  }
+
+  private _parse() {
     const nodes: Array<Node> = []
     while (!this.eof()) {
       this.consumeWhitespace()
