@@ -34,11 +34,25 @@ export default class ExpressionParser extends Parser {
 
   constructor(
     public source: string,
+    public fileName: string = ''
   ) {
-    super(source)
+    super(source, fileName)
   }
 
   parse() {
+    try {
+      const expr = this._parse()
+      return expr
+    } catch (e) {
+      if (this.fileName) {
+        e.message += `\nfile: ${this.fileName}`
+      }
+      e.message += `\nline: ${this.line}, column: ${this.column}\n\n${this.currentContext()}`
+      throw e
+    }
+  }
+
+  private _parse() {
     while (!this.eof()) {
       if (this.match(CharCodes.LEFT_CURLY_BRACE) && this.match(CharCodes.LEFT_CURLY_BRACE, this.pos + 1)) {
         this.advance(2)

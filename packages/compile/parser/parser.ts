@@ -5,8 +5,10 @@ type QuoteStringResultRef = { result?: string }
 
 export default class Parser {
   protected pos: number = 0
+  public line: number = 1
+  public column: number = 1
 
-  constructor(public source: string) {}
+  constructor(public source: string, public fileName: string) {}
 
   consumeChar() {
     const ch = this.source.charCodeAt(this.pos)
@@ -31,10 +33,20 @@ export default class Parser {
   }
 
   advance(step?: number) {
-    if (!step) {
+    const _advanceOnce = () => {
+      if (this.source[this.pos] === '\n') {
+        this.column = 1
+        this.line++
+      } else {
+        this.column++
+      }
       this.pos++
+    }
+
+    if (!step) {
+      _advanceOnce()
     } else {
-      while (step-- > 0) this.pos++
+      while (step-- > 0) _advanceOnce()
     }
   }
 
@@ -66,5 +78,35 @@ export default class Parser {
       result.push(ch)
     }
     return result.join('')
+  }
+
+  public currentContext(): string {
+    const MAX_NEXT_LINE = 2
+    let answer = ''
+
+    let _pos = this.pos - 1, accumulateNextLine = 0
+    while (_pos >= 0 && accumulateNextLine < MAX_NEXT_LINE + 2) {
+      if (this.source[_pos] === '\n') {
+        accumulateNextLine++
+      }
+      answer = this.source[_pos] + answer
+      _pos--
+    }
+
+    if (this.pos < this.source.length) {
+      answer += this.source[this.pos]
+    }
+
+    _pos = this.pos + 1, accumulateNextLine = 0
+    while (_pos < this.source.length && accumulateNextLine < MAX_NEXT_LINE) {
+      if (this.source[_pos] === '\n') {
+        accumulateNextLine++
+      }
+
+      answer += this.source[_pos]
+      _pos++
+    }
+
+    return answer
   }
 }

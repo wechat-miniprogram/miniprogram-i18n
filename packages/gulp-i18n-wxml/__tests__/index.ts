@@ -29,7 +29,7 @@ test('should transform wxml files', (done) => {
   const wxmlContent = '<view>{{ t("key") }}</view>'
   const filepath = 'test/file.wxml'
   const contents = Buffer.from(wxmlContent)
-  const transpiled = new TranslationFunctionTransformer().transform(wxmlContent)
+  const transpiled = new TranslationFunctionTransformer().transform(wxmlContent, filepath)
 
   const wxsPath = 'i18n/module.wxs'
   const stream = gulpI18nWxmlTransformer({ wxsPath })
@@ -48,7 +48,7 @@ test('customized translation function', (done) => {
   const wxmlContent = '<view>{{ _("key") }}</view>'
   const filepath = 'test/file.wxml'
   const contents = Buffer.from(wxmlContent)
-  const transpiled = new TranslationFunctionTransformer('_', 'mpi18n').transform(wxmlContent)
+  const transpiled = new TranslationFunctionTransformer('_', 'mpi18n').transform(wxmlContent, filepath)
 
   const wxsPath = 'i18n/module.wxs'
   const stream = gulpI18nWxmlTransformer({ wxsPath, wxsModuleName: 'mpi18n', i18nFunctionName: '_' })

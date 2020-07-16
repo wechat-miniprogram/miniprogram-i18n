@@ -32,22 +32,22 @@ export class TranslationFunctionTransformer {
   /**
    * Given a piece of wxml source code, transform its i18n function calls into normal wxs function calls
    */
-  public transform(source: string): string {
+  public transform(source: string, fileName: string = ''): string {
     this.source = source
-    const parser = new WxmlParser(source)
+    const parser = new WxmlParser(source, fileName)
     const nodes = parser.parse()
     // Transform function call expressions in place
-    this.transformNodes(nodes)
+    this.transformNodes(nodes, fileName)
     return this.source
   }
 
-  private transformNodes(nodes: Node[]) {
+  private transformNodes(nodes: Node[], fileName: string) {
     // walk through wxml nodes to pick up interpolation blocks
     for (let i = nodes.length - 1; i >= 0; i--) {
       const node = nodes[i]
       if (node instanceof Text) {
         if (node.content.includes(BLOCK_DELIMITER_START)) {
-          const { content, transformed } = this.transformFunctionCallExpr(node.content)
+          const { content, transformed } = this.transformFunctionCallExpr(node.content, fileName)
           if (transformed) {
             const head = this.source.substring(0, node.start)
             const rear = this.source.substring(node.end)
@@ -55,11 +55,11 @@ export class TranslationFunctionTransformer {
           }
         }
       } else if (node instanceof Element) {
-        this.transformNodes(node.children)
+        this.transformNodes(node.children, fileName)
         const attributes = this.sortAttributesByStartPos(node.attributes)
         for (const attrValue of attributes) {
           if (attrValue && attrValue.value.includes(BLOCK_DELIMITER_START)) {
-            const { content, transformed } = this.transformFunctionCallExpr(attrValue.value)
+            const { content, transformed } = this.transformFunctionCallExpr(attrValue.value, fileName)
             if (transformed) {
               const head = this.source.substring(0, attrValue.start)
               const rear = this.source.substring(attrValue.end)
@@ -71,8 +71,8 @@ export class TranslationFunctionTransformer {
     }
   }
 
-  private transformFunctionCallExpr(source: string) {
-    const parser = new ExpressionParser(source)
+  private transformFunctionCallExpr(source: string, fileName: string) {
+    const parser = new ExpressionParser(source, fileName)
     const expr = parser.parse()
     return this.transformFunctionCallExprRecursively(source, expr.callExpressions)
   }
