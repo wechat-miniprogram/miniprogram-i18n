@@ -1,6 +1,6 @@
 {
   "name": "@miniprogram-i18n/gulp-i18n-locales",
-  "version": "1.0.0-rc.10",
+  "version": "1.0.0-rc.11",
   "description": "",
   "main": "index.js",
   "scripts": {

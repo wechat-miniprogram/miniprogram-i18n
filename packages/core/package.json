@@ -1,6 +1,6 @@
 {
   "name": "@miniprogram-i18n/core",
-  "version": "1.0.0-rc.9",
+  "version": "1.0.0-rc.11",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
