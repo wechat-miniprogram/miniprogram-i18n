@@ -1,6 +1,6 @@
 {
   "name": "@miniprogram-i18n/gulp-i18n-locales",
-  "version": "1.0.0-rc.11",
+  "version": "1.0.0-rc.12",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@miniprogram-i18n/compile": "^1.0.0-rc.6",
-    "@miniprogram-i18n/core": "^1.0.0-rc.9",
+    "@miniprogram-i18n/compile": "^1.0.0-rc.12",
+    "@miniprogram-i18n/core": "^1.0.0-rc.12",
     "format-message-parse": "^6.2.0",
     "plugin-error": "^1.0.1",
     "through2": "^3.0.0",
