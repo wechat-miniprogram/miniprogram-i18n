@@ -44,6 +44,7 @@ const gulpI18nWxmlTransformer = (options?: Options) => through.obj((file: File, 
     const wxsTag = getWxsTag(relativeWxsPath, wxsModuleName)
     if (transformedContents.indexOf(wxsTag) !== -1) {
       // has already write wxs tag into wxml.
+      file.contents = Buffer.from(transformedContents)
       return cb(null, file)
     }
     file.contents = Buffer.concat([Buffer.from(wxsTag), Buffer.from(transformedContents)])
